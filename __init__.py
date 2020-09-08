@@ -1,4 +1,5 @@
 import json
+import os
 from datetime import datetime, timedelta
 
 import click
@@ -18,6 +19,13 @@ def cli():
 @click.option("--tags", "-t", multiple=True, default=[])
 @click.option("--dashboard-id")
 @click.option("--panel-id")
+@click.option(
+    "--grafana-token",
+    prompt=True,
+    default=lambda: os.environ.get("GRAFANA_TOKEN", ""),
+    hide_input=True,
+    type=str,
+)
 def create_grafana_annotation(
     grafana_url,
     description,
@@ -26,6 +34,7 @@ def create_grafana_annotation(
     tags,
     dashboard_id,
     panel_id,
+    grafana_token,
 ):
     """
     Creates a Grafana annotation
@@ -60,12 +69,19 @@ def create_grafana_annotation(
 
     click.echo(
         click.style(
-            f"Sending {grafana_url} annotations. Payload: \n", fg="green", bold=True
+            f"Sending {grafana_url} annotations. Payload:", fg="green", bold=True
         )
     )
     click.echo(click.style(json.dumps(payload, indent=2), fg="green"))
-    res = requests.post(f"{grafana_url}/api/annotations", json=payload)
+    res = requests.post(
+        f"{grafana_url}/api/annotations",
+        json=payload,
+        headers={"Authorization": f"Bearer {grafana_token}"},
+    )
     res.raise_for_status()
+
+    click.echo(click.style("\nResponse:", fg="green"))
+    click.echo(click.style(json.dumps(res.json(), indent=2), fg="white"))
 
 
 if __name__ == "__main__":
