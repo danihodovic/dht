@@ -1,0 +1,28 @@
+---
+# yamllint disable rule:line-length
+version: '3'
+
+tasks:
+  create-binary:
+    desc: Creates a cross platform binary
+    cmds:
+      - pyinstaller __init__.py -y --onefile --name dht
+      - staticx ./dist/dht ./dist/dht
+
+  create-release:
+    desc: Creates a Github release
+    cmds:
+      - >
+        github-release release
+        --user danihodovic
+        --repo dht
+        --tag $(git rev-parse --short HEAD)
+        --name dht
+        --description "DHT"
+      - >
+        github-release upload
+        --user danihodovic
+        --repo dht
+        --tag $(git rev-parse --short HEAD)
+        --name dht
+        --file ./dist/dht
