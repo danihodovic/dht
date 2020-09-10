@@ -21,8 +21,8 @@ def cli():
 @click.option("--panel-id")
 @click.option(
     "--grafana-token",
+    envvar="GRAFANA_TOKEN",
     prompt=True,
-    default=lambda: os.environ.get("GRAFANA_TOKEN", ""),
     hide_input=True,
     type=str,
 )
@@ -39,8 +39,6 @@ def create_grafana_annotation(
     """
     Creates a Grafana annotation
     """
-    print(end_time)
-
     start_time = datetime.utcfromtimestamp(start_time)
     delta = end_time - start_time
     if delta > timedelta(hours=1):
@@ -85,5 +83,10 @@ def create_grafana_annotation(
 
 
 if __name__ == "__main__":
+    # https://github.com/pallets/click/issues/1212#issuecomment-481792065
+    if not os.getenv("LC_ALL"):
+        os.environ["LC_ALL"] = "C.UTF-8"
+    if not os.getenv("LANG"):
+        os.environ["LANG"] = "C.UTF-8"
     cli.add_command(create_grafana_annotation)
     cli()

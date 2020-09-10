@@ -3,13 +3,13 @@
 version: '3'
 
 tasks:
-  create-binary:
+  build:
     desc: Creates a cross platform binary
     cmds:
       - pyinstaller __init__.py -y --onefile --name dht
       - staticx ./dist/dht ./dist/dht
 
-  create-release:
+  release:
     desc: Creates a Github release
     cmds:
       - >
