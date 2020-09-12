@@ -22,6 +22,7 @@ pyinstaller = "^4.0"
 jedi = "^0.17.2"
 staticx = "^0.11.0"
 patchelf-wrapper = "^1.2.0"
+six = "^1.15.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0a5"]

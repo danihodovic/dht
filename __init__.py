@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 import click
 import requests
 
+from src.postgres import clear_postgres_archives
+
 
 @click.group()
 def cli():
@@ -89,4 +91,5 @@ if __name__ == "__main__":
     if not os.getenv("LANG"):
         os.environ["LANG"] = "C.UTF-8"
     cli.add_command(create_grafana_annotation)
+    cli.add_command(clear_postgres_archives)
     cli()
