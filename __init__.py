@@ -6,6 +6,7 @@ import click
 import requests
 
 from src.postgres import clear_postgres_archives
+from src.travis_ci import debug_travis
 
 
 @click.group()
@@ -92,4 +93,5 @@ if __name__ == "__main__":
         os.environ["LANG"] = "C.UTF-8"
     cli.add_command(create_grafana_annotation)
     cli.add_command(clear_postgres_archives)
+    cli.add_command(debug_travis)
     cli()
