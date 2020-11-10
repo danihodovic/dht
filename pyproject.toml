@@ -1,6 +1,6 @@
 [tool.black]
 skip_numeric_underscore_normalization = true
-exclude = ".*(venv|migrations|node_modules|s3)"
+exclude = ".*(venv|virtualenv|migrations|node_modules|s3)"
 
 [tool.poetry]
 name = "tools"
