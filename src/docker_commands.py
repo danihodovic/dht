@@ -29,4 +29,7 @@ def network_connect(to_container, container):
         with open("/etc/hostname", "r") as file_:
             container = file_.read().rstrip()
 
+    click.echo(
+        click.style(f"Connecting {container} to {network}", fg="green", bold=True)
+    )
     network.connect(container)
