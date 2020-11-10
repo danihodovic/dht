@@ -4,8 +4,13 @@ from datetime import datetime, timedelta
 
 import click
 import requests
+from click import core
 
+from src.docker_commands import docker
 from src.postgres import clear_postgres_archives
+
+# https://github.com/pallets/click/issues/448#issuecomment-246029304
+core._verify_python3_env = lambda: None
 
 
 @click.group()
@@ -85,11 +90,7 @@ def create_grafana_annotation(
 
 
 if __name__ == "__main__":
-    # https://github.com/pallets/click/issues/1212#issuecomment-481792065
-    if not os.getenv("LC_ALL"):
-        os.environ["LC_ALL"] = "C.UTF-8"
-    if not os.getenv("LANG"):
-        os.environ["LANG"] = "C.UTF-8"
     cli.add_command(create_grafana_annotation)
     cli.add_command(clear_postgres_archives)
+    cli.add_command(docker)
     cli()
