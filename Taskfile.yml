@@ -13,16 +13,21 @@ tasks:
     desc: Creates a Github release
     cmds:
       - >
+        github-release delete
+        --user danihodovic
+        --repo dht
+        --tag latest
+      - >
         github-release release
         --user danihodovic
         --repo dht
-        --tag $(git rev-parse --short HEAD)
+        --tag latest
         --name dht
         --description "DHT"
       - >
         github-release upload
         --user danihodovic
         --repo dht
-        --tag $(git rev-parse --short HEAD)
+        --tag latest
         --name dht
         --file ./dist/dht
