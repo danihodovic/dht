@@ -5,7 +5,12 @@ from pathlib import Path
 import click
 
 
-@click.command()
+@click.group()
+def postgres():
+    pass
+
+
+@postgres.command()
 @click.option(
     "--directory",
     "-d",
@@ -13,7 +18,7 @@ import click
     help="Postgres archive directory",
     required=True,
 )
-def clear_postgres_archives(directory):
+def clear_file_archives(directory):
     """
     Removes all but the most recent archive file
     You should probably configure this in postgresql.conf
