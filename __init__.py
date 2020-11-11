@@ -6,6 +6,7 @@ import click
 import requests
 from click import core
 
+from src.cloudflare import cloudflare
 from src.docker_commands import docker
 from src.postgres import clear_postgres_archives
 
@@ -93,4 +94,5 @@ if __name__ == "__main__":
     cli.add_command(create_grafana_annotation)
     cli.add_command(clear_postgres_archives)
     cli.add_command(docker)
+    cli.add_command(cloudflare)
     cli()
