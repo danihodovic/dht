@@ -11,6 +11,7 @@ tasks:
 
   release:
     desc: Creates a Github release
+    deps: [build]
     cmds:
       - >
         github-release delete
