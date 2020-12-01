@@ -7,6 +7,7 @@ import click
 from git import Repo
 from github import Github
 from gitlab import Gitlab
+from halo import Halo
 
 
 @click.group()
@@ -49,22 +50,25 @@ def pr(repo_dir, github_token, gitlab_token, gitlab_url):
     gh_project_name = m.group(1)
     gl_project_search = gh_project_name.split("/")[-1]
 
-    click.echo(click.style("Rebasing and pushing repo changes...", bold=True))
-    _run(f"zsh -i -c 'cd {repo_dir} && grom'")
-    _run(f"zsh -i -c 'cd {repo_dir} && gpushbranch'")
+    with Halo(text="Rebasing on master") as h:
+        _run(f"zsh -i -c 'cd {repo_dir} && grom'")
+        h.succeed()
+
+    with Halo(text="Pushing changes", spinner="dots4") as h:
+        _run(f"zsh -i -c 'cd {repo_dir} && gpushbranch'")
+        h.succeed()
 
     summary = repo.head.commit.summary
     message = "\n".join(repo.head.commit.message.split("\n")[2:])
 
     if "github" in remote_url:
-        click.echo(
-            click.style(f"Detected remote Github...{gh_project_name}", bold=True)
-        )
         gh = Github(github_token)
         gh_project = gh.get_repo(gh_project_name)
-        pull_request = gh_project.create_pull(
-            base="master", head=repo.active_branch.name, title=summary, body=message
-        )
+        with Halo(text="Creating pull-request", spinner="circleQuarters") as h:
+            pull_request = gh_project.create_pull(
+                base="master", head=repo.active_branch.name, title=summary, body=message
+            )
+            h.succeed()
         pull_request_url = pull_request.html_url
     elif "gitlab" in remote_url:
         gl = Gitlab(gitlab_url, private_token=gitlab_token)
@@ -74,14 +78,17 @@ def pr(repo_dir, github_token, gitlab_token, gitlab_url):
             raise click.UsageError(f"Could not determine project, found: {projects}")
         project = projects[0]
         click.echo(click.style(f"Detected remote Gitlab...{project.name}", bold=True))
-        merge_request = project.mergerequests.create(
-            {
-                "source_branch": repo.active_branch.name,
-                "target_branch": "master",
-                "title": summary,
-                "description": message,
-            }
-        )
+
+        with Halo(text="Creating merge-request", spinner="circleQuarters") as h:
+            merge_request = project.mergerequests.create(
+                {
+                    "source_branch": repo.active_branch.name,
+                    "target_branch": "master",
+                    "title": summary,
+                    "description": message,
+                }
+            )
+            h.succeed()
         pull_request_url = merge_request.attributes["web_url"]
 
     click.echo(click.style(pull_request_url, fg="green", bold=True))
