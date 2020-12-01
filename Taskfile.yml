@@ -6,7 +6,10 @@ tasks:
   build:
     desc: Creates a cross platform binary
     cmds:
-      - pyinstaller __init__.py -y --onefile --name dht
+      - pyinstaller __init__.py -y
+        --onefile
+        --hidden-import gitlab.v4.objects
+        --name dht
       - staticx ./dist/dht ./dist/dht
 
   release:
