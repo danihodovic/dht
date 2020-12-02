@@ -5,7 +5,7 @@ COPY pyproject.toml poetry.lock /app/
 RUN pip install poetry
 RUN poetry config virtualenvs.create false && poetry install --no-interaction
 COPY . /app/
-RUN task build
+RUN task build-binary
 
 FROM ubuntu:20.04
 RUN apt-get update && apt-get install -y git && \

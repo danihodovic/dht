@@ -4,6 +4,12 @@ version: '3'
 
 tasks:
   build:
+    desc: Builds a binary and docker image
+    deps: [build-binary]
+    cmds:
+      - docker build . -t depode/dht
+
+  build-binary:
     desc: Creates a cross platform binary
     cmds:
       - pyinstaller __init__.py -y
@@ -35,3 +41,4 @@ tasks:
         --tag latest
         --name dht
         --file ./dist/dht
+      - docker push depode/dht
