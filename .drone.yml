@@ -8,6 +8,9 @@ volumes:
     host:
       path: /tmp/drone-cache
 
+workspace:
+  path: /drone/dht/
+
 steps:
   - name: restore-cache-with-filesystem
     image: meltwater/drone-cache:dev
@@ -32,12 +35,20 @@ steps:
       - pip install poetry
       - poetry install
 
-  - name: test
+  - name: lint
     image: python:3.8
     commands:
       - . .virtualenv/bin/activate
       - black . --check
       - pylint src
+
+  - name: test binary
+    image: python:3.8
+    commands:
+      - . .virtualenv/bin/activate
+      - sh -c "$(curl -ssL https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
+      - task build-binary
+      - ./dist/dht
 
   - name: rebuild-cache-with-filesystem
     image: meltwater/drone-cache:dev
