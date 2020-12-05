@@ -23,6 +23,12 @@ def git():
     show_default=True,
 )
 @click.option(
+    "--force-push/--no-force-push",
+    "-f",
+    default=False,
+    show_default=True,
+)
+@click.option(
     "--github-token",
     default=lambda: os.environ.get("GITHUB_TOKEN", ""),
 )
@@ -35,7 +41,7 @@ def git():
     default=lambda: os.environ.get("GITLAB_URL", "https://gitlab.com"),
     show_default="Gitlab URL",
 )
-def pr(repo_dir, github_token, gitlab_token, gitlab_url):
+def pr(repo_dir, force_push, github_token, gitlab_token, gitlab_url):
     click.clear()
     repo = Repo(repo_dir)
     remote_urls = list(repo.remote().urls)
@@ -55,7 +61,8 @@ def pr(repo_dir, github_token, gitlab_token, gitlab_url):
         h.succeed()
 
     with Halo(text="Pushing changes", spinner="dots4") as h:
-        _run(f"zsh -i -c 'cd {repo_dir} && gpushbranch'")
+        force = "--force" if force_push else ""
+        _run(f"zsh -i -c 'cd {repo_dir} && gpushbranch {force}'")
         h.succeed()
 
     summary = repo.head.commit.summary
@@ -77,7 +84,6 @@ def pr(repo_dir, github_token, gitlab_token, gitlab_url):
             projects = ", ".join((project.name_with_namespace for project in projects))
             raise click.UsageError(f"Could not determine project, found: {projects}")
         project = projects[0]
-        click.echo(click.style(f"Detected remote Gitlab...{project.name}", bold=True))
 
         with Halo(text="Creating merge-request", spinner="circleQuarters") as h:
             merge_request = project.mergerequests.create(
