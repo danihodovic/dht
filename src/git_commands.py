@@ -1,7 +1,7 @@
 # pylint: disable=invalid-name,too-many-locals
 import os
-import re
 import subprocess
+from urllib.parse import urlparse
 
 import click
 from git import Repo
@@ -36,12 +36,7 @@ def git():
     "--gitlab-token",
     default=lambda: os.environ.get("GITLAB_TOKEN", ""),
 )
-@click.option(
-    "--gitlab-url",
-    default=lambda: os.environ.get("GITLAB_URL", "https://gitlab.com"),
-    show_default="Gitlab URL",
-)
-def pr(repo_dir, force_push, github_token, gitlab_token, gitlab_url):
+def pr(repo_dir, force_push, github_token, gitlab_token):
     click.clear()
     repo = Repo(repo_dir)
     remote_urls = list(repo.remote().urls)
@@ -49,18 +44,18 @@ def pr(repo_dir, force_push, github_token, gitlab_token, gitlab_url):
         raise click.UsageError(f"Could not determine remote repo url: {remote_urls}")
     remote_url = remote_urls[0]
 
-    m = re.match(r".*[:/](([\w+-]+)\/([\w+-]+))(.git)?", remote_url)
-    if not m:
-        raise click.UsageError(f"Could not determine remote project: {remote_url}")
+    result = urlparse(remote_url)
+    hostname = result.hostname
+    path = result.path
 
-    gh_project_name = m.group(1)
+    gh_project_name = path.replace(".git", "")
     gl_project_search = gh_project_name.split("/")[-1]
 
     with Halo(text="Rebasing on master") as h:
         _run(f"zsh -i -c 'cd {repo_dir} && grom'")
         h.succeed()
 
-    with Halo(text="Pushing changes", spinner="dots4") as h:
+    with Halo(text=f"Pushing changes to {hostname}", spinner="dots4") as h:
         force = "--force" if force_push else ""
         _run(f"zsh -i -c 'cd {repo_dir} && gpushbranch {force}'")
         h.succeed()
@@ -78,7 +73,7 @@ def pr(repo_dir, force_push, github_token, gitlab_token, gitlab_url):
             h.succeed()
         pull_request_url = pull_request.html_url
     elif "gitlab" in remote_url:
-        gl = Gitlab(gitlab_url, private_token=gitlab_token)
+        gl = Gitlab(f"https://{hostname}", private_token=gitlab_token)
         projects = gl.projects.list(search=gl_project_search)
         if len(projects) != 1:
             projects = ", ".join((project.name_with_namespace for project in projects))
