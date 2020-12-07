@@ -1,11 +1,11 @@
 # pylint: disable=invalid-name,too-many-locals
 import os
-import re
 import subprocess
 
 import click
+import giturlparse
 from git import Repo
-from github import Github
+from github import Github, GithubException
 from gitlab import Gitlab
 from halo import Halo
 
@@ -36,12 +36,7 @@ def git():
     "--gitlab-token",
     default=lambda: os.environ.get("GITLAB_TOKEN", ""),
 )
-@click.option(
-    "--gitlab-url",
-    default=lambda: os.environ.get("GITLAB_URL", "https://gitlab.com"),
-    show_default="Gitlab URL",
-)
-def pr(repo_dir, force_push, github_token, gitlab_token, gitlab_url):
+def pr(repo_dir, force_push, github_token, gitlab_token):
     click.clear()
     repo = Repo(repo_dir)
     remote_urls = list(repo.remote().urls)
@@ -49,12 +44,12 @@ def pr(repo_dir, force_push, github_token, gitlab_token, gitlab_url):
         raise click.UsageError(f"Could not determine remote repo url: {remote_urls}")
     remote_url = remote_urls[0]
 
-    m = re.match(r".*[:/](([\w+-]+)\/([\w+-]+))(.git)?", remote_url)
-    if not m:
-        raise click.UsageError(f"Could not determine remote project: {remote_url}")
+    giturl = giturlparse.parse(remote_url)
 
-    gh_project_name = m.group(1)
-    gl_project_search = gh_project_name.split("/")[-1]
+    if not giturl.github and not giturl.gitlab:
+        raise click.UsageError(
+            f"This command only supports Github & Gitlab - remote: {remote_url}"
+        )
 
     with Halo(text="Rebasing on master") as h:
         _run(f"zsh -i -c 'cd {repo_dir} && grom'")
@@ -68,24 +63,42 @@ def pr(repo_dir, force_push, github_token, gitlab_token, gitlab_url):
     summary = repo.head.commit.summary
     message = "\n".join(repo.head.commit.message.split("\n")[2:])
 
-    if "github" in remote_url:
+    if giturl.github:
         gh = Github(github_token)
-        gh_project = gh.get_repo(gh_project_name)
-        with Halo(text="Creating pull-request", spinner="circleQuarters") as h:
-            pull_request = gh_project.create_pull(
-                base="master", head=repo.active_branch.name, title=summary, body=message
-            )
+        gh_project = gh.get_repo(
+            f"{giturl.owner}/{giturl.repo}"  # pylint: disable=no-member
+        )
+        with Halo(text="Creating pull-request", spinner="dots5") as h:
+            try:
+                pull_request = gh_project.create_pull(
+                    base="master",
+                    head=repo.active_branch.name,
+                    title=summary,
+                    body=message,
+                )
+            except GithubException as ex:
+                if ex.status != 422:
+                    raise ex
+                pull_request = list(
+                    gh_project.get_pulls(
+                        state="open", base="master", head=repo.active_branch.name
+                    )
+                )[0]
             h.succeed()
         pull_request_url = pull_request.html_url
-    elif "gitlab" in remote_url:
-        gl = Gitlab(gitlab_url, private_token=gitlab_token)
-        projects = gl.projects.list(search=gl_project_search)
+
+    elif giturl.gitlab:
+        gl = Gitlab(
+            f"https://{giturl.domain}",  # pylint: disable=no-member
+            private_token=gitlab_token,
+        )
+        projects = gl.projects.list(search=giturl.repo)  # pylint: disable=no-member
         if len(projects) != 1:
             projects = ", ".join((project.name_with_namespace for project in projects))
             raise click.UsageError(f"Could not determine project, found: {projects}")
         project = projects[0]
 
-        with Halo(text="Creating merge-request", spinner="circleQuarters") as h:
+        with Halo(text="Creating merge-request", spinner="dots5") as h:
             merge_request = project.mergerequests.create(
                 {
                     "source_branch": repo.active_branch.name,
