@@ -29,6 +29,11 @@ def git():
     show_default=True,
 )
 @click.option(
+    "--merge-after-pipeline/--no-merge-after-pipeline",
+    default=False,
+    show_default=True,
+)
+@click.option(
     "--github-token",
     default=lambda: os.environ.get("GITHUB_TOKEN", ""),
 )
@@ -36,7 +41,7 @@ def git():
     "--gitlab-token",
     default=lambda: os.environ.get("GITLAB_TOKEN", ""),
 )
-def pr(repo_dir, force_push, github_token, gitlab_token):
+def pr(repo_dir, force_push, merge_after_pipeline, github_token, gitlab_token):
     click.clear()
     repo = Repo(repo_dir)
     remote_urls = list(repo.remote().urls)
@@ -105,8 +110,11 @@ def pr(repo_dir, force_push, github_token, gitlab_token):
                     "target_branch": "master",
                     "title": summary,
                     "description": message,
+                    "remove_source_branch": True,
                 }
             )
+            if merge_after_pipeline:
+                merge_request.merge(merge_when_pipeline_succeeds=True)
             h.succeed()
         pull_request_url = merge_request.attributes["web_url"]
 
