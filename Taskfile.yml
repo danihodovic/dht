@@ -22,6 +22,8 @@ tasks:
     desc: Creates a Github release
     deps: [build]
     cmds:
+      - git tag --delete latest
+      - git tag -a latest -m 'Latest build'
       - >
         github-release delete
         --user danihodovic
