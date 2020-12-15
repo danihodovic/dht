@@ -1,9 +1,11 @@
-# pylint: disable=invalid-name,too-many-locals
+# pylint: disable=invalid-name,too-many-locals,wrong-import-position
 import os
 import subprocess
 
 import click
 import giturlparse
+
+os.environ["GIT_PYTHON_REFRESH"] = "quiet"
 from git import Repo
 from github import Github, GithubException
 from gitlab import Gitlab
