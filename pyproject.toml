@@ -2,6 +2,11 @@
 skip_numeric_underscore_normalization = true
 exclude = ".*(venv|virtualenv|migrations|node_modules|s3)"
 
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+skip = '.virtualenv,.venv'
+
 [tool.poetry]
 name = "tools"
 version = "0.0.1"

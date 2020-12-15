@@ -40,9 +40,10 @@ steps:
     commands:
       - . .virtualenv/bin/activate
       - black . --check
+      - isort --check-only .
       - pylint src
 
-  - name: test binary
+  - name: test-binary
     image: python:3.8
     commands:
       - . .virtualenv/bin/activate
