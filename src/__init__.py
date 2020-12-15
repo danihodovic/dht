@@ -14,6 +14,7 @@ from .git.cmd import git
 from .grafana import grafana
 from .i3 import i3
 from .jobber import jobber
+from .logcli import logcli
 from .molecule import molecule
 from .postgres.cmd import postgres
 from .process import kill_process
@@ -45,3 +46,4 @@ cli.add_command(redis)
 cli.add_command(jobber)
 cli.add_command(install)
 cli.add_command(kill_process)
+cli.add_command(logcli)

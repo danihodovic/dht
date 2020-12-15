@@ -1,7 +1,13 @@
 import functools
 import os
+import subprocess
 
 import click
+from tenacity import retry, wait_exponential
+
+
+class PingFailed(click.Abort):
+    pass
 
 
 def verbose(func):
@@ -31,3 +37,22 @@ def require_root(func):
         func(*args, **kwargs)
 
     return wrapper
+
+
+def ping(hostname, port, quiet=False):
+    cmd = f"nc -vz {hostname} {str(port)}"
+    stdout = subprocess.DEVNULL if quiet else subprocess.PIPE
+    try:
+        subprocess.run(
+            cmd.split(), check=True, timeout=5, stdin=None, stdout=stdout, stderr=stdout
+        )
+    except (subprocess.TimeoutExpired, subprocess.CalledProcessError) as ex:
+        if not quiet:
+            click.secho("Failed to open a tcp connection to: ", nl=False, fg="red")
+            click.secho(f"{hostname}:{port}", underline=True, fg="red")
+        raise PingFailed() from ex
+
+
+@retry(wait=wait_exponential(multiplier=1, min=0.2, max=0.5))
+def ping_until(hostname, port, quiet=False):
+    ping(hostname, port, quiet)

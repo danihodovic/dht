@@ -8,6 +8,8 @@ import click
 from contexttimer import Timer
 from halo import Halo
 
+from src.utils import ping
+
 from .cmd import postgres
 
 
@@ -140,13 +142,3 @@ def parse_custom_scheme(url):
     if url.scheme == "k8s":
         d["base"] = f"kubectl exec --stdin {container} --"
     return d
-
-
-def ping(hostname, port):
-    try:
-        cmd = f"nc -vz {hostname} {port}"
-        subprocess.run(cmd.split(), check=True, timeout=5)
-    except subprocess.TimeoutExpired as ex:
-        click.secho("Failed to open a tcp connection to: ", nl=False, fg="red")
-        click.secho(f"{hostname}:{port}", underline=True, fg="red")
-        raise click.Abort() from ex
