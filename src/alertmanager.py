@@ -75,7 +75,13 @@ def notify_clickatell(
     "--webhook-url",
     required=True,
 )
-def trigger_test_webhook(webhook_url):
+@click.option(
+    "--status",
+    type=click.Choice(["firing", "resolved"], case_sensitive=False),
+    default="firing",
+    show_default=True,
+)
+def trigger_test_webhook(webhook_url, status):
     # pylint: disable=line-too-long
     requests.post(
         webhook_url,
@@ -97,7 +103,7 @@ def trigger_test_webhook(webhook_url):
                         "severity": "high",
                     },
                     "startsAt": "2020-12-15T19:06:53.118176233Z",
-                    "status": "firing",
+                    "status": status,
                 }
             ],
             "commonAnnotations": {
@@ -126,9 +132,12 @@ def trigger_test_webhook(webhook_url):
 
 
 def format_sms(alert):
-    text = f'Alert: {alert["labels"]["alertname"]} triggered. '
-    if "description" in alert["annotations"]:
-        text += f'Description: {alert["annotations"]["description"]}'
+    # FIRING vs resolved
+    status = alert["status"].upper()
+    text = f'Alert: {alert["labels"]["alertname"]} is {status}. '
     if "environment" in alert["labels"]:
         text += f'Environment: {alert["labels"]["environment"]}.'
+
+    if alert["status"] == "firing" and "description" in alert["annotations"]:
+        text += f'Description: {alert["annotations"]["description"]}'
     return text
