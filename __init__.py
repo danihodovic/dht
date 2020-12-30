@@ -6,6 +6,7 @@ import requests
 
 from src.alertmanager import alertmanager
 from src.cloudflare import cloudflare
+from src.django import django
 from src.docker_commands import docker
 from src.git_commands import git
 from src.grafana import grafana
@@ -29,4 +30,5 @@ if __name__ == "__main__":
     cli.add_command(samson)
     cli.add_command(git)
     cli.add_command(alertmanager)
+    cli.add_command(django)
     cli()
