@@ -1,6 +1,5 @@
 # pylint: disable=invalid-name,too-many-locals,wrong-import-position,no-value-for-parameter,unused-argument,too-many-arguments
 import os
-import subprocess
 
 import click
 import giturlparse
@@ -145,17 +144,3 @@ def get_remote_url(repo):
     if len(remote_urls) != 1:
         raise click.UsageError(f"Could not determine remote repo url: {remote_urls}")
     return remote_urls[0]
-
-
-def _run(cmd):
-    # Communicate instead of run
-    # proc = subpr
-    subprocess.Popen(
-        cmd,
-        shell=True,
-        # check=True,
-        #     stdout=subprocess.PIPE,
-        #     stderr=subprocess.PIPE,
-    ).communicate()
-    # return result
-    # pass
