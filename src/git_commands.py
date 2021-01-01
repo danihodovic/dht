@@ -51,19 +51,21 @@ def pr(ctx, repo_dir, force_push, merge_after_pipeline, github_token, gitlab_tok
     ctx.obj = repo
     click.clear()
     remote_url = get_remote_url(ctx.obj)
+
     giturl = giturlparse.parse(remote_url)
     if not giturl.github and not giturl.gitlab:
         raise click.UsageError(
             f"This command only supports Github & Gitlab - remote: {remote_url}"
         )
 
+    repo.remote().fetch()
+
     with Halo(text="Rebasing on master") as h:
-        _run(f"zsh -i -c 'cd {repo.working_tree_dir} && grom'")
+        repo.git.rebase("origin/master")
         h.succeed()
 
     with Halo(text="Pushing changes", spinner="dots4") as h:
-        force = "--force" if force_push else ""
-        _run(f"zsh -i -c 'cd {repo.working_tree_dir} && gpushbranch {force}'")
+        repo.git.push(repo.remote().name, repo.active_branch.name, force=force_push)
         h.succeed()
 
     with Halo(text="Creating pull-request", spinner="dots5") as h:
@@ -146,11 +148,14 @@ def get_remote_url(repo):
 
 
 def _run(cmd):
-    result = subprocess.run(
+    # Communicate instead of run
+    # proc = subpr
+    subprocess.Popen(
         cmd,
         shell=True,
-        check=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
-    return result
+        # check=True,
+        #     stdout=subprocess.PIPE,
+        #     stderr=subprocess.PIPE,
+    ).communicate()
+    # return result
+    # pass
