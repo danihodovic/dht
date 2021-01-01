@@ -12,6 +12,7 @@ from src.git_commands import git
 from src.grafana import grafana
 from src.postgres import postgres
 from src.samson import samson
+from src.taskwarrior import task
 
 # https://github.com/pallets/click/issues/448#issuecomment-246029304
 click.core._verify_python3_env = lambda: None
@@ -31,4 +32,5 @@ if __name__ == "__main__":
     cli.add_command(git)
     cli.add_command(alertmanager)
     cli.add_command(django)
+    cli.add_command(task)
     cli()
