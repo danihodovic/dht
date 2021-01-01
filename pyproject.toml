@@ -24,6 +24,7 @@ PyGithub = "^1.53"
 python-gitlab = "^2.5.0"
 halo = "^0.0.31"
 giturlparse = "^0.10.0"
+tasklib = "^2.2.1"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"
