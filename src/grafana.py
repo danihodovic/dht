@@ -6,11 +6,11 @@ import requests
 
 
 @click.group()
-def grafana():
+def cli():
     pass
 
 
-@grafana.command()
+@cli.command()
 @click.option("--grafana-url", "-u", required=True)
 @click.option("--description", "-d", required=True)
 @click.option("--start-time", required=True, type=int)

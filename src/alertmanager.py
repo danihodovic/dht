@@ -5,11 +5,11 @@ import requests
 
 
 @click.group()
-def alertmanager():
+def cli():
     pass
 
 
-@alertmanager.command()
+@cli.command()
 @click.option("--from-number")
 @click.option("--to-number", "to_numbers", multiple=True, required=True)
 @click.option(
@@ -70,7 +70,7 @@ def notify_clickatell(
             )
 
 
-@alertmanager.command()
+@cli.command()
 @click.option(
     "--webhook-url",
     required=True,

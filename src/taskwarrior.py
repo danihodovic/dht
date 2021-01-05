@@ -4,11 +4,11 @@ from tasklib import TaskWarrior
 
 
 @click.group()
-def task():
+def cli():
     pass
 
 
-@task.command()
+@cli.command()
 @click.argument("task_id")
 @click.pass_context
 def start(ctx, task_id):
@@ -22,7 +22,7 @@ def start(ctx, task_id):
     click.secho(f"Started task {task_id}", fg="green")
 
 
-@task.command()
+@cli.command()
 def stop():
     """
     Unlike `task start` it only stops currently running tasks
@@ -34,7 +34,7 @@ def stop():
         click.secho(f"Stopped task {active_task['id']}", fg="green")
 
 
-@task.command()
+@cli.command()
 @click.argument("task_id")
 def done(task_id):
     """

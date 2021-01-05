@@ -7,7 +7,7 @@ import click
 
 
 @click.group()
-def django():
+def cli():
     pass
 
 
@@ -18,7 +18,7 @@ def validate_remote(ctx, param, value):
     return url
 
 
-@django.command()
+@cli.command()
 @click.option(
     "--remote", callback=validate_remote, required=True, envvar="MANAGE_PY_REMOTE_EXEC"
 )
