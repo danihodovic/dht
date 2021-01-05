@@ -6,19 +6,20 @@ import giturlparse
 
 os.environ["GIT_PYTHON_REFRESH"] = "quiet"
 from git import Repo
-from github import Github, GithubException
 from gitlab import Gitlab
 from halo import Halo
+
+from github import Github, GithubException
 
 pass_repo = click.make_pass_decorator(Repo)
 
 
 @click.group()
-def git():
+def cli():
     pass
 
 
-@git.command()
+@cli.command()
 @click.option(
     "--dir",
     "repo_dir",

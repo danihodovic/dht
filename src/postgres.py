@@ -6,11 +6,11 @@ import click
 
 
 @click.group()
-def postgres():
+def cli():
     pass
 
 
-@postgres.command()
+@cli.command()
 @click.option(
     "--directory",
     "-d",

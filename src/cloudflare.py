@@ -23,7 +23,7 @@ from requests_toolbelt import sessions
     envvar="CLOUDFLARE_TOKEN",
 )
 @click.pass_context
-def cloudflare(ctx, email, token):
+def cli(ctx, email, token):
     client = sessions.BaseUrlSession(base_url="https://api.cloudflare.com")
     client.hooks["response"] = [exit_hook]
     client.headers.update(
@@ -36,7 +36,7 @@ def cloudflare(ctx, email, token):
     ctx.obj = {"client": client}
 
 
-@cloudflare.command()
+@cli.command()
 @click.option("--domain", required=True)
 @click.option("--type", "record_type", default="A")
 @click.option("--value", required=True)
@@ -100,7 +100,7 @@ def set_record(
     )
 
 
-@cloudflare.command()
+@cli.command()
 @click.option("--domain", required=True)
 @click.option("--rule-id", required=True)
 @click.option("--url-matches", required=True)

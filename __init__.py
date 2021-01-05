@@ -1,36 +1,39 @@
-import json
+# pylint: disable=invalid-name,arguments-differ,eval-used,protected-access
 import os
 
 import click
-import requests
-
-from src.alertmanager import alertmanager
-from src.cloudflare import cloudflare
-from src.django import django
-from src.docker_commands import docker
-from src.git_commands import git
-from src.grafana import grafana
-from src.postgres import postgres
-from src.samson import samson
-from src.taskwarrior import task
 
 # https://github.com/pallets/click/issues/448#issuecomment-246029304
 click.core._verify_python3_env = lambda: None
 
 
-@click.group()
-def cli():
-    pass
+plugin_folder = os.path.join(os.path.dirname(__file__), "src")
+
+
+class LazyCLI(click.MultiCommand):
+    """
+    https://click.palletsprojects.com/en/7.x/commands/?highlight=plug#custom-multi-commands
+    """
+
+    def list_commands(self, ctx):
+        rv = []
+        for filename in os.listdir(plugin_folder):
+            if filename.endswith(".py"):
+                rv.append(filename[:-3])
+        rv.sort()
+        return rv
+
+    def get_command(self, ctx, name):
+        try:
+            mod = __import__(f"src2.{name}", None, None, ["cli"])
+        except ImportError:
+            return
+        return mod.cli
+
+    def invoke(self, ctx):
+        pass
 
 
 if __name__ == "__main__":
-    cli.add_command(grafana)
-    cli.add_command(postgres)
-    cli.add_command(docker)
-    cli.add_command(cloudflare)
-    cli.add_command(samson)
-    cli.add_command(git)
-    cli.add_command(alertmanager)
-    cli.add_command(django)
-    cli.add_command(task)
+    cli = LazyCLI()
     cli()

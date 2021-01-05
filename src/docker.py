@@ -3,11 +3,11 @@ import docker as docker_lib
 
 
 @click.group()
-def docker():
+def cli():
     pass
 
 
-@docker.command()
+@cli.command()
 @click.option(
     "--to-container",
     type=str,

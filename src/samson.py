@@ -6,11 +6,11 @@ from git import Repo
 
 
 @click.group()
-def samson():
+def cli():
     pass
 
 
-@samson.command()
+@cli.command()
 @click.option(
     "--url",
     type=str,
