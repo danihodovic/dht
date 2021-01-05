@@ -18,6 +18,15 @@ tasks:
         --name dht
       - staticx ./dist/dht ./dist/dht
 
+  build-fat-binary:
+    desc: Creates a faster to boot binary for use outside of server environments
+    cmds:
+      - pyinstaller __init__.py -y
+        --hidden-import gitlab.v4.objects
+        --name dht
+        --distpath /opt/
+      - echo -e '#!/bin/sh\n/opt/dht/dht $@' | sudo tee /usr/local/bin/dht
+
   release:
     desc: Creates a Github release
     deps: [build]
