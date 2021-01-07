@@ -1,4 +1,4 @@
-# pylint: disable=invalid-name,too-many-locals,wrong-import-position,no-value-for-parameter,unused-argument,too-many-arguments
+# pylint: disable=too-many-locals,wrong-import-position,no-value-for-parameter,unused-argument,too-many-arguments
 import os
 
 import click
