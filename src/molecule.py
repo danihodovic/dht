@@ -17,6 +17,17 @@ def molecule():
 def _read_molecule_inventory(role_name):
     inventory = {}
     fname = Path.home() / f".cache/molecule/{role_name}/default/instance_config.yml"
+
+    if not os.path.exists(fname):
+        click.secho(
+            (
+                "The inventory file for the current directory is missing. "
+                "Are you in an ansible role directory?"
+            ),
+            fg="red",
+        )
+        raise click.Abort()
+
     with open(fname, "r") as f:
         contents = yaml.load(f, Loader=yaml.FullLoader)
         for entry in contents:
