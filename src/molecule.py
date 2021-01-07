@@ -1,6 +1,7 @@
 import os
 import subprocess
 from pathlib import Path
+from time import time
 
 import click
 import plumbum
@@ -19,11 +20,23 @@ def _read_molecule_inventory(role_name):
     with open(fname, "r") as f:
         contents = yaml.load(f, Loader=yaml.FullLoader)
         for entry in contents:
-            inventory[f"{entry['instance']}:{entry['address']}"] = entry
+            inventory[_entry_repr(entry)] = entry
     return inventory
 
 
+def _entry_repr(entry):
+    return f"{entry['instance']}@{entry['address']}"
+
+
+def _write_zsh_history(cmd):
+    with open(Path.home() / ".zsh_history", "a") as f:
+        f.write(f": {int(time())}:0;{cmd}\n")
+
+
 @molecule.command()
+@click.option(
+    "--instance",
+)
 @click.option(
     "--role-dir",
     type=click.Path(
@@ -33,14 +46,30 @@ def _read_molecule_inventory(role_name):
     ),
     default=os.getcwd,
 )
-def ssh(role_dir):
+def ssh(instance, role_dir):
     role_name = Path(role_dir).name
     inventory = _read_molecule_inventory(role_name)
-    try:
-        selected = FzfPrompt().prompt(inventory.keys())[0]
-    except plumbum.commands.processes.ProcessExecutionError:
-        return
-    entry = inventory[selected]
+
+    if not instance:
+        try:
+            instance = FzfPrompt().prompt(inventory.keys())[0]
+        # Handle Ctrl+C
+        except plumbum.commands.processes.ProcessExecutionError:
+            return
+
+    entry = inventory[instance]
     subprocess.Popen(
-        ["ssh", f"{entry['user']}@{entry['address']}", "-o", "StrictHostKeyChecking=no"]
+        [
+            "ssh",
+            f"{entry['user']}@{entry['address']}",
+            "-i",
+            entry["identity_file"],
+            "-o",
+            "StrictHostKeyChecking=no",
+        ]
     ).communicate()
+
+    history_cmd = " ".join(
+        ["dht"] + click.get_os_args() + ["--instance", _entry_repr(entry)]
+    )
+    _write_zsh_history(history_cmd)
