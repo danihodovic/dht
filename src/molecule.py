@@ -69,18 +69,34 @@ def ssh(instance, role_dir):
             return
 
     entry = inventory[instance]
-    subprocess.Popen(
-        [
-            "ssh",
-            f"{entry['user']}@{entry['address']}",
-            "-i",
-            entry["identity_file"],
-            "-o",
-            "StrictHostKeyChecking=no",
-        ]
-    ).communicate()
+    subprocess.Popen(_ssh_cmd(entry)).communicate()
 
     history_cmd = " ".join(
         ["dht"] + click.get_os_args() + ["--instance", _entry_repr(entry)]
     )
     _write_zsh_history(history_cmd)
+
+
+def _ssh_cmd(entry):
+    return [
+        "ssh",
+        entry["address"],
+        "-l",
+        entry["user"],
+        "-p",
+        str(entry["port"]),
+        "-i",
+        entry["identity_file"],
+        "-o",
+        "UserKnownHostsFile=/dev/null",
+        "-o",
+        "ControlPersist=60s",
+        "-o",
+        "ForwardX11=no",
+        "-o",
+        "LogLevel=ERROR",
+        "-o",
+        "IdentitiesOnly=yes",
+        "-o",
+        "StrictHostKeyChecking=no",
+    ]
