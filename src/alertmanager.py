@@ -1,7 +1,10 @@
+# pylint: disable=redefined-outer-name
 import json
 
 import click
 import requests
+
+from src.utils import verbose
 
 
 @click.group()
@@ -25,12 +28,7 @@ def alertmanager():
         mode="r",
     ),
 )
-@click.option(
-    "--verbose/--no-verbose",
-    "-v",
-    default=False,
-    show_default=True,
-)
+@verbose
 def notify_clickatell(
     from_number, to_numbers, clickatell_token, alertmanager_payload_file, verbose
 ):

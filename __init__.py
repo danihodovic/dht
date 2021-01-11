@@ -13,6 +13,7 @@ from src.grafana import grafana
 from src.i3 import i3
 from src.molecule import molecule
 from src.postgres import postgres
+from src.redis import redis
 from src.samson import samson
 from src.taskwarrior import task
 
@@ -37,4 +38,5 @@ if __name__ == "__main__":
     cli.add_command(task)
     cli.add_command(i3)
     cli.add_command(molecule)
+    cli.add_command(redis)
     cli()

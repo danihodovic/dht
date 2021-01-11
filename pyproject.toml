@@ -27,6 +27,7 @@ giturlparse = "^0.10.0"
 tasklib = "^2.2.1"
 PyYAML = "^5.3.1"
 pyfzf = "^0.2.2"
+redis = "^3.5.3"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"
