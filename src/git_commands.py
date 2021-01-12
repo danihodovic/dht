@@ -6,6 +6,7 @@ import giturlparse
 
 os.environ["GIT_PYTHON_REFRESH"] = "quiet"
 from git import Repo
+from git.exc import GitCommandError
 from github import Github, GithubException
 from gitlab import Gitlab
 from halo import Halo
@@ -64,7 +65,22 @@ def pr(ctx, repo_dir, force_push, merge_after_pipeline, github_token, gitlab_tok
         h.succeed()
 
     with Halo(text="Pushing changes", spinner="dots4") as h:
-        repo.git.push(repo.remote().name, repo.active_branch.name, force=force_push)
+        try:
+            repo.git.push(repo.remote().name, repo.active_branch.name, force=force_push)
+        except GitCommandError as ex:
+            if "your current branch is behind" in ex.stderr:
+                h.stop()
+                click.confirm(
+                    (
+                        "Your branch is behind the remote. You can either "
+                        "abort or force push. Do you want to force push?"
+                    ),
+                    abort=True,
+                )
+                repo.git.push(repo.remote().name, repo.active_branch.name, force=True)
+                h.start()
+            else:
+                raise ex
         h.succeed()
 
     with Halo(text="Creating pull-request", spinner="dots5") as h:
