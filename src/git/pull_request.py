@@ -5,21 +5,18 @@ import click
 import giturlparse
 
 os.environ["GIT_PYTHON_REFRESH"] = "quiet"
-from git import Repo
-from git.exc import GitCommandError
 from github import Github, GithubException
 from gitlab import Gitlab
 from halo import Halo
 
+from git import Repo  # pylint: disable=no-name-in-module
+from git.exc import GitCommandError  # pylint: disable=no-name-in-module,import-error
+
 pass_repo = click.make_pass_decorator(Repo)
+from .cmd import git as git_cmd  # pylint: disable=import-error
 
 
-@click.group()
-def git():
-    pass
-
-
-@git.command()
+@git_cmd.command()
 @click.option(
     "--dir",
     "repo_dir",
@@ -46,7 +43,15 @@ def git():
     default=lambda: os.environ.get("GITLAB_TOKEN", ""),
 )
 @click.pass_context
-def pr(ctx, repo_dir, force_push, merge_after_pipeline, github_token, gitlab_token):
+def pull_request(
+    ctx, repo_dir, force_push, merge_after_pipeline, github_token, gitlab_token
+):
+    """
+    A command to simplify pull request creation.
+    1. Fetch remote changes
+    2. Push to a remote branch
+    3. Create pull request with Github or Gitlab
+    """
     repo = Repo(repo_dir)
     ctx.obj = repo
     click.clear()
