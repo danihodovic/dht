@@ -1,11 +1,11 @@
-# pylint: disable=redefined-outer-name
 import json
 import sys
 
 import click
 
 import redis as redis_lib
-from src.utils import verbose
+
+from .utils import verbose
 
 
 @click.group()

@@ -1,10 +1,9 @@
-# pylint: disable=redefined-outer-name
 import json
 
 import click
 import requests
 
-from src.utils import verbose
+from .utils import verbose
 
 
 @click.group()

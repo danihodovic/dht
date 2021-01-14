@@ -12,7 +12,7 @@ tasks:
   build-binary:
     desc: Creates a cross platform binary
     cmds:
-      - pyinstaller __init__.py -y
+      - pyinstaller cli.py -y
         --onefile
         --hidden-import gitlab.v4.objects
         --name dht
@@ -21,7 +21,7 @@ tasks:
   build-fat-binary:
     desc: Creates a faster to boot binary for use outside of server environments
     cmds:
-      - pyinstaller __init__.py -y
+      - pyinstaller cli.py -y
         --hidden-import gitlab.v4.objects
         --name dht
         --distpath /opt/

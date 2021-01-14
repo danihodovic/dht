@@ -2,7 +2,8 @@ import os
 
 import click
 import requests
-from git import Repo
+
+from git import Repo  # pylint: disable=no-name-in-module
 
 
 @click.group()
