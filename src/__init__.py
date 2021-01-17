@@ -14,7 +14,8 @@ from .grafana import grafana
 from .i3 import i3
 from .jobber import jobber
 from .molecule import molecule
-from .postgres import postgres
+from .postgres.cmd import postgres
+from .process import kill_process
 from .redis import redis
 from .samson import samson
 from .taskwarrior import task
@@ -42,3 +43,4 @@ cli.add_command(molecule)
 cli.add_command(redis)
 cli.add_command(jobber)
 cli.add_command(install)
+cli.add_command(kill_process)
