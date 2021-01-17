@@ -28,7 +28,7 @@ def shell(remote):
             [
                 "docker",
                 "-H",
-                f"ssh://{remote.netloc}",
+                f"ssh://{remote.hostname}",
                 "exec",
                 "-it",
                 remote.path,
@@ -47,7 +47,7 @@ def shell(remote):
         pod = ""
         lines = output.splitlines()
         for line in lines:
-            if re.search(rf"^{remote.netloc}-\w+-\w+", line):
+            if re.search(rf"^{remote.hostname}-\w+-\w+", line):
                 pod = line.split()[0]
                 break
 
