@@ -388,6 +388,17 @@ optional = false
 python-versions = ">=2.6,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
 
 [[package]]
+name = "pretty-errors"
+version = "1.2.19"
+description = "Prettifies Python exception output to make it legible."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+colorama = "*"
+
+[[package]]
 name = "prompt-toolkit"
 version = "3.0.8"
 description = "Library for building powerful interactive command lines in Python"
@@ -806,7 +817,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "b2e5595eaa555b247f0cf3692f29103a66e2b47be7e87b6d52f498d795b75da1"
+content-hash = "8da0367d09e29092a4ced7caf3e52725fd27725769e7006d4e41148560800116"
 
 [metadata.files]
 altgraph = [
@@ -967,6 +978,10 @@ pickleshare = [
 plumbum = [
     {file = "plumbum-1.6.9-py2.py3-none-any.whl", hash = "sha256:91418dcc66b58ab9d2e3b04b3d1e0d787dc45923154fb8b4a826bd9316dba0d6"},
     {file = "plumbum-1.6.9.tar.gz", hash = "sha256:16b9e19d96c80f2e9d051ef5f04927b834a6ac0ce5d2768eb8662b5cd53e43df"},
+]
+pretty-errors = [
+    {file = "pretty_errors-1.2.19-py3-none-any.whl", hash = "sha256:87fd3071dbc302c9064f5b9a6114ea1678dda6ace70cbcd1452e46661af408e6"},
+    {file = "pretty_errors-1.2.19.tar.gz", hash = "sha256:b37b8a84634e9e6294273926e9cdea99414390e9a329293d018a1b4bbe8e2aa7"},
 ]
 prompt-toolkit = [
     {file = "prompt_toolkit-3.0.8-py3-none-any.whl", hash = "sha256:7debb9a521e0b1ee7d2fe96ee4bd60ef03c6492784de0547337ca4433e46aa63"},
