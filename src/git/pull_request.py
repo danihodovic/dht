@@ -1,5 +1,6 @@
 # pylint: disable=too-many-locals,wrong-import-position,no-value-for-parameter,unused-argument,too-many-arguments
 import os
+import time
 
 import click
 import giturlparse
@@ -18,7 +19,7 @@ from .cmd import git as git_cmd  # pylint: disable=import-error
 
 @git_cmd.command()
 @click.option(
-    "--dir",
+    "--cwd",
     "repo_dir",
     default=os.getcwd,
     show_default=True,
@@ -93,6 +94,7 @@ def pull_request(
             pull_request_url = create_github_pull_request()
         elif giturl.gitlab:
             pull_request_url = create_gitlab_pull_request()
+        h.succeed()
 
     click.echo(click.style(pull_request_url, fg="green", bold=True))
     click.launch(pull_request_url)
@@ -149,7 +151,24 @@ def create_gitlab_pull_request(repo):
         }
     )
     if ctx.params["merge_after_pipeline"]:
-        merge_request.merge(merge_when_pipeline_succeeds=True)
+        while True:
+            merge_request = project.mergerequests.get(merge_request.iid)
+            if merge_request.merge_status not in ["checking", "can_be_merged"]:
+                click.secho(
+                    (
+                        "Merge request can't be merged automatically, "
+                        "status: {merge_request.merge_status}"
+                    ),
+                    fg="red",
+                )
+                break
+
+            if merge_request.merge_status == "can_be_merged":
+                merge_request.merge(merge_when_pipeline_succeeds=True)
+                break
+
+            time.sleep(0.5)
+
     pull_request_url = merge_request.attributes["web_url"]
     return pull_request_url
 
