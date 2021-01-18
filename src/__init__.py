@@ -2,6 +2,7 @@ import json
 import os
 
 import click
+import pretty_errors
 import requests
 
 from .alertmanager import alertmanager
