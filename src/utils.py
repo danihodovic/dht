@@ -13,6 +13,15 @@ def verbose(func):
     )(func)
 
 
+def cwd(func):
+    return click.option(
+        "--cwd",
+        "repo_dir",
+        default=os.getcwd,
+        show_default=True,
+    )(func)
+
+
 def require_root(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):

@@ -14,16 +14,13 @@ from git import Repo  # pylint: disable=no-name-in-module
 from git.exc import GitCommandError  # pylint: disable=no-name-in-module,import-error
 
 pass_repo = click.make_pass_decorator(Repo)
+from src.utils import cwd
+
 from .cmd import git as git_cmd  # pylint: disable=import-error
 
 
 @git_cmd.command()
-@click.option(
-    "--cwd",
-    "repo_dir",
-    default=os.getcwd,
-    show_default=True,
-)
+@cwd
 @click.option(
     "--force-push/--no-force-push",
     "-f",
