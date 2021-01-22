@@ -1,13 +1,9 @@
 import click
 import docker as docker_lib
+from .cmd import docker as docker_cmd
 
 
-@click.group()
-def docker():
-    pass
-
-
-@docker.command()
+@docker_cmd.command()
 @click.option(
     "--to-container",
     type=str,

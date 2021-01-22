@@ -9,7 +9,7 @@ from .alertmanager import alertmanager
 from .cloudflare import cloudflare
 from .dht import install
 from .django import django
-from .docker_commands import docker
+from .docker.cmd import docker
 from .git.cmd import git
 from .grafana import grafana
 from .i3 import i3
