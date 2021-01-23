@@ -18,7 +18,7 @@ steps:
     settings:
       backend: "filesystem"
       restore: true
-      cache_key: '{{ .Repo.Name }}_{{ checksum "requirements.txt" }}'
+      cache_key: '{{ .Repo.Name }}_{{ checksum "poetry.lock" }}'
       archive_format: "gzip"
       mount:
         - '.virtualenv'
@@ -57,7 +57,7 @@ steps:
     settings:
       backend: "filesystem"
       rebuild: true
-      cache_key: '{{ .Repo.Name }}_{{ checksum "requirements.txt" }}'
+      cache_key: '{{ .Repo.Name }}_{{ checksum "poetry.lock" }}'
       archive_format: "gzip"
       mount:
         - '.virtualenv'
