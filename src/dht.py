@@ -12,7 +12,7 @@ def install():
         f.writelines(
             [
                 "#!/bin/sh\n",
-                "/opt/dht/dht $@",
+                '/opt/dht/dht "$@"',
             ]
         )
     os.chmod("/usr/local/bin/dht", 0o755)
