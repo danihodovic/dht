@@ -38,6 +38,8 @@ def logcli(ctx, loki_server, ssh_tunnel_port, tail, logcli_args):
     logcli_args += (
         "--include-label=container_name",
         "--include-label=container",
+        "--include-label=host",
+        "--include-label=instance",
     )
     if tail:
         if "-t" not in logcli_args or "--tail" not in logcli_args:
