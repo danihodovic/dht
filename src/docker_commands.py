@@ -1,5 +1,4 @@
 import click
-
 import docker as docker_lib
 
 
