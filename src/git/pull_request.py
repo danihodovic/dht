@@ -50,7 +50,7 @@ def pull_request(
     2. Push to a remote branch
     3. Create pull request with Github or Gitlab
     """
-    repo = Repo(repo_dir)
+    repo = Repo(repo_dir, search_parent_directories=True)
     ctx.obj = repo
     click.clear()
     remote_url = get_remote_url(ctx.obj)
