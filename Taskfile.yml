@@ -25,7 +25,7 @@ tasks:
         --hidden-import gitlab.v4.objects
         --name dht
         --distpath /opt/
-      - echo -e '#!/bin/sh\n/opt/dht/dht $@' | sudo tee /usr/local/bin/dht
+      - sudo dht install
 
   release:
     desc: Creates a Github release
