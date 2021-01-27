@@ -92,3 +92,32 @@ def open_ssh_tunnel(remote_host, remote_port, local_port):
         ping_until("localhost", local_port, quiet=True)
         halo.succeed()
         return ssh_tunnel
+
+
+def kube_client():
+    from kubernetes import config
+
+    config.load_kube_config()
+
+    from kubernetes import client
+
+    # ,cOut[19]: kubernetes.client.models.v1_pod.V1Pod
+
+    return client.CoreV1Api()
+    # c.list_pod_for_all_namespaces(watch=False, label_selector='app=loki')
+    # c.connect_get_namespaced_pod_portforward(loki, namespace="logging")
+    # In [29]: portforward(c.connect_get_namespaced_pod_portforward, "loki-0", "loki", ports='7777')
+
+
+# $ k get po --namespace=logging
+# NAME             READY   STATUS    RESTARTS   AGE
+# loki-0           1/1     Running   0          4d10h
+
+# for i in client2.list_pod_for_all_namespaces().items:
+
+# pf = portforward(
+#     api_instance.connect_get_namespaced_pod_portforward,
+#     name, 'default',
+#     ports='80',
+# )
+# http = pf.socket(80)
