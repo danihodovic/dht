@@ -2,7 +2,7 @@ import subprocess
 
 import click
 
-import git
+from git import Repo
 from src.utils import cwd
 
 from .cmd import git as git_cmd
@@ -22,7 +22,7 @@ def autosquash(repo_dir, edit):
     the first commit that diverged from the parent branch will be chosen as the
     message.
     """
-    repo = git.Repo(repo_dir)
+    repo = Repo(repo_dir, search_parent_directories=True)
     if repo.active_branch.name == "master":
         click.secho("This command can't be ran on the master branch", fg="red")
         click.Abort()
