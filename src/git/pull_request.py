@@ -33,6 +33,11 @@ from .cmd import git as git_cmd  # pylint: disable=import-error
     show_default=True,
 )
 @click.option(
+    "--open-url/--no-open-url",
+    default=False,
+    show_default=True,
+)
+@click.option(
     "--github-token",
     default=lambda: os.environ.get("GITHUB_TOKEN", ""),
 )
@@ -42,7 +47,13 @@ from .cmd import git as git_cmd  # pylint: disable=import-error
 )
 @click.pass_context
 def pull_request(
-    ctx, repo_dir, force_push, merge_after_pipeline, github_token, gitlab_token
+    ctx,
+    repo_dir,
+    force_push,
+    merge_after_pipeline,
+    open_url,
+    github_token,
+    gitlab_token,
 ):
     """
     A command to simplify pull request creation.
@@ -94,7 +105,8 @@ def pull_request(
         h.succeed()
 
     click.echo(click.style(pull_request_url, fg="green", bold=True))
-    click.launch(pull_request_url)
+    if open_url:
+        click.launch(pull_request_url)
 
 
 @pass_repo
