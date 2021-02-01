@@ -4,6 +4,7 @@ import os
 import click
 import pretty_errors
 import requests
+from click_didyoumean import DYMGroup
 
 from .alertmanager import alertmanager
 from .cloudflare import cloudflare
@@ -26,7 +27,7 @@ from .taskwarrior import task
 click.core._verify_python3_env = lambda: None  # pylint: disable=protected-access
 
 
-@click.group()
+@click.group(cls=DYMGroup)
 def cli():
     pass
 
