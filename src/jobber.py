@@ -19,13 +19,21 @@ def jobber():
     default=sys.stdin,
 )
 def notify(run_record):
-    with run_record:
-        data = json.load(run_record)
-
+    content = run_record.read().strip().replace("\n", "")
+    data = json.loads(content)
     status = "succeeded" if data["succeeded"] else "failed"
     msg = f"{data['job']['command']} {status}"
     subprocess.run(
-        ["notify-send", msg, "-i", "network-transmit-receive", "-t", "5000"], check=True
+        [
+            "notify-send",
+            msg,
+            "-i",
+            "network-transmit-receive",
+            "-t",
+            "5000",
+            "--urgency=critical",
+        ],
+        check=True,
     )
 
 
