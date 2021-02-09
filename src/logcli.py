@@ -1,5 +1,6 @@
 # pylint: disable=unused-argument
 import os
+import shutil
 import signal
 import subprocess
 
@@ -35,6 +36,16 @@ def logcli(ctx, loki_server, ssh_tunnel_port, tail, logcli_args):
     """
     Opens an SSH tunnel to the Loki server and uses the tunnel to run logcli.
     """
+    if not shutil.which("logcli"):
+        click.secho(
+            (
+                "A logcli binary is required for this command.\n"
+                "https://grafana.com/docs/loki/latest/getting-started/logcli/#installation"
+            ),
+            fg="red",
+        )
+        raise click.Abort()
+
     logcli_args += (
         "--include-label=container_name",
         "--include-label=container",
