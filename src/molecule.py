@@ -61,6 +61,9 @@ def ssh(instance, role_dir):
     role_name = Path(role_dir).name
     inventory = _read_molecule_inventory(role_name)
 
+    if len(inventory) == 1:
+        instance = list(inventory.keys())[0]
+
     if not instance:
         try:
             instance = FzfPrompt().prompt(inventory.keys())[0]
