@@ -91,13 +91,38 @@ def set_record(
             "proxied": proxied,
         },
     )
-    click.echo(
-        click.style(
-            f"Set [{record_type}] {value} for {domain}",
-            fg="green",
-            bold=True,
-        )
+
+
+@cloudflare.command()
+@click.option("--domain", required=True)
+@click.pass_context
+def delete_record(
+    ctx,
+    domain,
+):  # pylint: disable=too-many-arguments
+    client = ctx.obj["client"]
+    zone_id = zone_for_domain(client, domain)
+
+    res = client.get(
+        f"/client/v4/zones/{zone_id}/dns_records",
+        params={"name": domain},
     )
+    records = res.json()
+    if len(records["result"]) > 1:
+        click.echo(
+            click.style(
+                "There are more than one record for the domain, exiting...",
+                fg="red",
+                bold=True,
+            )
+        )
+        raise click.Abort()
+
+    for record in records["result"]:
+        name = f"{record['name']} => {record['content']} ({record['type']})"
+        if click.confirm(f"Delete:\t\t{name}\t"):
+            click.secho(f"Deleting {name}", fg="green")
+            client.delete(f"/client/v4/zones/{zone_id}/dns_records/{record['id']}")
 
 
 @cloudflare.command()
