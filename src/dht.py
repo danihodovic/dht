@@ -1,4 +1,6 @@
+import inspect
 import os
+from pathlib import Path
 
 import click
 
@@ -28,3 +30,18 @@ def install():
         )
     os.chmod("/usr/local/bin/dht_notify", 0o755)
     click.secho("Wrote to /usr/local/bin/dht_notify", bold=True)
+
+    hook_path = Path.home() / ".task/hooks/on-add-warn-missing-project.sh"
+    hook_path.parent.mkdir(parents=True, exist_ok=True)
+
+    with open(str(hook_path), "w") as f:
+        f.write(
+            inspect.getdoc(
+                """
+        #!/bin/sh
+        stdin=`cat`
+        echo "$stdin" | dht task hook-notify-missing-project
+        """
+            )
+        )
+        os.chmod(str(hook_path), 0o775)
