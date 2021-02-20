@@ -6,68 +6,53 @@ import subprocess
 from pathlib import Path
 
 import click
+import plumbum
 import requests
+from pyfzf.pyfzf import FzfPrompt
+
+http = requests.Session()
+assert_status_hook = lambda response, *args, **kwargs: response.raise_for_status()
+http.hooks["response"] = [assert_status_hook]
 
 
 @click.command()
-@click.argument(
-    "repo",
-    required=True,
-)
-@click.option(
-    "--out",
-    "-o",
-    type=click.Path(exists=False),
-    help="Output path",
-)
-@click.option(
-    "--filename",
-    "-f",
-    default="readme",
-    help="Search the repo for a markdown file matching this pattern.",
-)
-def download_markdown(repo, out, filename):
+@click.argument("repo", required=True)
+@click.option("--out", "-o", help="Output path", default=os.getcwd)
+def download_markdown(repo, out):
     if "https://" in repo:
         repo = re.match(
             r"https://github.com/([A-Za-z1-9_-]+/[A-Za-z1-9_-]+)", repo
         ).groups()[0]
-    res = requests.get(f"https://api.github.com/repos/{repo}/git/trees/master")
-    res.raise_for_status()
-    for tree in res.json()["tree"]:
-        if tree["path"].lower().startswith(filename):
-            filename_path = tree["path"]
-    if not filename_path:
-        click.secho("Repo is missing README file")
-        raise click.Abort()
 
-    res = requests.get(
-        f"https://raw.githubusercontent.com/{repo}/master/{filename_path}", stream=True
-    )
-    res.raise_for_status()
+    files = select_files_in_tree(repo)
+    dotted_repo = repo.replace("/", ".")
 
-    fname = f"{repo.replace('/', '.')}.{filename_path}"
-    path = Path("/tmp") / fname
-    with open(path, "wb") as f:
-        for chunk in res.iter_content(10000):
-            f.write(chunk)
+    for file in files:
+        res = http.get(
+            f"https://raw.githubusercontent.com/{repo}/master/{file}", stream=True
+        )
+        path = Path("/tmp") / dotted_repo / file
+        if not path.parent.exists():
+            path.parent.mkdir(parents=True)
+        with open(path, "wb") as f:
+            f.write(res.content)
+        subprocess.run(
+            f"md-to-pdf {path}",
+            shell=True,
+            check=True,
+            env={
+                "PATH": f"PATH=$PATH:{Path.home()/'.n'/'bin'}",
+            },
+        )
 
-    dotted_fname = repo.replace("/", ".") + ".pdf"
-    if not out:
-        out = str(Path("/tmp") / dotted_fname)
-    elif os.path.isdir(out):
-        out = str(Path(out) / dotted_fname)
+    # Prune markdown files
+    for root, _, files in os.walk(Path("/tmp") / dotted_repo, topdown=True):
+        for file in files:
+            if file.endswith(".md") or file.endswith(".rst"):
+                os.remove(Path(root) / file)
 
-    cmd = f"md-to-pdf {path}"
-    subprocess.run(
-        cmd,
-        shell=True,
-        check=True,
-        env={
-            "PATH": f"PATH=$PATH:{Path.home()/'.n'/'bin'}",
-        },
-    )
-    shutil.copy(path.with_suffix(".pdf"), out)
-    click.secho(f"Generated {out}", fg="green")
+    shutil.copytree(Path("/tmp") / dotted_repo, Path(out) / dotted_repo)
+    click.secho(f"Generated {Path(out) / dotted_repo}", fg="green")
 
 
 @click.command()
@@ -90,8 +75,7 @@ def download_markdown(repo, out, filename):
 def download_readthedocs(url, out, format):
     fname = re.match("https://([A-Za-z1-9_-]+.readthedocs)", url).groups()[0]
     pdf_url = f"https://{fname}.io/_/downloads/en/stable/{format}/"
-    res = requests.get(pdf_url)
-    res.raise_for_status()
+    res = http.get(pdf_url)
     if not out:
         out = (Path(".") / fname).with_suffix(f".{format}")
     elif os.path.isdir(out):
@@ -100,3 +84,27 @@ def download_readthedocs(url, out, format):
         for chunk in res.iter_content(10000):
             f.write(chunk)
     click.secho(f"Generated {out}", fg="green")
+
+
+def select_files_in_tree(repo):
+    url = f"https://api.github.com/repos/{repo}/git/trees/master?recursive=true"
+    res = http.get(url)
+
+    paths = []
+    for entry in res.json()["tree"]:
+        path = entry["path"]
+        if path.endswith(".md") or path.endswith(".rst"):
+            paths.append(path)
+
+    if len(paths) == 0:
+        click.secho(f"Repository {repo} contains no markdown files")
+        raise click.Abort()
+
+    if len(paths) == 1:
+        return paths
+
+    try:
+        selected = FzfPrompt().prompt(paths, fzf_options="--multi")
+    except plumbum.commands.processes.ProcessExecutionError as ex:
+        raise click.Abort() from ex
+    return selected
