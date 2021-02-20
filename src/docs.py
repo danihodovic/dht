@@ -1,3 +1,4 @@
+# pylint: disable=redefined-builtin
 import os
 import re
 import shutil
@@ -9,17 +10,23 @@ import requests
 
 
 @click.command()
+@click.argument(
+    "repo",
+    required=True,
+)
 @click.option(
     "--out",
     "-o",
     type=click.Path(exists=False),
     help="Output path",
 )
-@click.argument(
-    "repo",
-    required=True,
+@click.option(
+    "--filename",
+    "-f",
+    default="readme",
+    help="Search the repo for a markdown file matching this pattern.",
 )
-def download_markdown(out, repo):
+def download_markdown(repo, out, filename):
     if "https://" in repo:
         repo = re.match(
             r"https://github.com/([A-Za-z1-9_-]+/[A-Za-z1-9_-]+)", repo
@@ -27,18 +34,18 @@ def download_markdown(out, repo):
     res = requests.get(f"https://api.github.com/repos/{repo}/git/trees/master")
     res.raise_for_status()
     for tree in res.json()["tree"]:
-        if tree["path"].lower().startswith("readme"):
-            readme_path = tree["path"]
-    if not readme_path:
+        if tree["path"].lower().startswith(filename):
+            filename_path = tree["path"]
+    if not filename_path:
         click.secho("Repo is missing README file")
         raise click.Abort()
 
     res = requests.get(
-        f"https://raw.githubusercontent.com/{repo}/master/{readme_path}", stream=True
+        f"https://raw.githubusercontent.com/{repo}/master/{filename_path}", stream=True
     )
     res.raise_for_status()
 
-    fname = f"{repo.replace('/', '.')}.{readme_path}"
+    fname = f"{repo.replace('/', '.')}.{filename_path}"
     path = Path("/tmp") / fname
     with open(path, "wb") as f:
         for chunk in res.iter_content(10000):
@@ -60,4 +67,36 @@ def download_markdown(out, repo):
         },
     )
     shutil.copy(path.with_suffix(".pdf"), out)
+    click.secho(f"Generated {out}", fg="green")
+
+
+@click.command()
+@click.argument(
+    "url",
+    required=True,
+)
+@click.option(
+    "--out",
+    "-o",
+    type=click.Path(exists=False),
+    help="Output path",
+)
+@click.option(
+    "--format",
+    type=click.Choice(["epub", "pdf"], case_sensitive=False),
+    default="pdf",
+    show_default=True,
+)
+def download_readthedocs(url, out, format):
+    fname = re.match("https://([A-Za-z1-9_-]+.readthedocs)", url).groups()[0]
+    pdf_url = f"https://{fname}.io/_/downloads/en/stable/{format}/"
+    res = requests.get(pdf_url)
+    res.raise_for_status()
+    if not out:
+        out = (Path(".") / fname).with_suffix(f".{format}")
+    elif os.path.isdir(out):
+        out = str((Path(out) / fname).with_suffix(f".{format}"))
+    with open(out, "wb") as f:
+        for chunk in res.iter_content(10000):
+            f.write(chunk)
     click.secho(f"Generated {out}", fg="green")
