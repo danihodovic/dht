@@ -11,6 +11,7 @@ from .cloudflare import cloudflare
 from .dht import install
 from .django import django
 from .docker_commands import docker
+from .docs import download_markdown
 from .git.cmd import git
 from .grafana import grafana
 from .i3 import i3
@@ -48,3 +49,4 @@ cli.add_command(jobber)
 cli.add_command(install)
 cli.add_command(kill_process)
 cli.add_command(logcli)
+cli.add_command(download_markdown)
