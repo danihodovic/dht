@@ -60,44 +60,48 @@ def done(task_id):
 
 
 @task.command()
-@click.argument("task_id", required=True)
+@click.argument("task_id", "task_ids", required=True, nargs=-1)
 @click.option(
     "--quiet/--no-quiet",
     default=False,
     show_default=True,
 )
-def edit(task_id, quiet):
+def edit(task_ids, quiet):
     """
     Opens an editor to modify the file in yaml
     """
     tw = TaskWarrior(data_location="~/.task", create=False)
-    try:
-        t = tw.tasks.get(id=task_id)
-    except Task.DoesNotExist as ex:
-        click.secho(f"Task id='{task_id}' does not exist", fg="red")
-        raise click.Abort() from ex
+    tasks = tw.tasks.filter(id__in=task_ids)
 
-    as_dict = json.loads(t.export_data())
-    immutable_keys = t.read_only_fields + ["status"]
-    for key in immutable_keys:
-        if key in immutable_keys:
-            del as_dict[key]
+    def preprocess(task):
+        immutable_keys = task.read_only_fields + ["status"]
+        as_dict = json.loads(t.export_data())
 
-    if "due" in as_dict:
-        due = dateutil.parser.parse(as_dict["due"]) + timedelta(days=1)
-        as_dict["due"] = due.strftime("%Y-%m-%d")
+        for key in immutable_keys:
+            if key in immutable_keys:
+                del as_dict[key]
 
-    result = click.edit("---\n" + yaml.dump(as_dict), extension=".yaml")
+        if "due" in as_dict:
+            due = dateutil.parser.parse(as_dict["due"]) + timedelta(days=1)
+            as_dict["due"] = due.strftime("%Y-%m-%d")
+
+        return as_dict
+
+    data = [preprocess(t) for t in tasks]
+    result = click.edit("---\n" + yaml.dump(data), extension=".yaml")
     if not result:
         raise click.Abort()
 
-    modified = yaml.load(result, yaml.FullLoader)
-    if "due" in modified:
-        serializer = SerializingObject(t.backend)
-        due = dateutil.parser.parse(modified["due"])
-        modified["due"] = serializer.timestamp_serializer(due)
-    t._update_data(modified)  # pylint: disable=protected-access
-    t.save()
+    updated_tasks = yaml.load(result, yaml.FullLoader)
+
+    for updated_task in updated_tasks:
+        if "due" in updated_task:
+            serializer = SerializingObject(t.backend)
+            due = dateutil.parser.parse(updated_task["due"])
+            updated_task["due"] = serializer.timestamp_serializer(due)
+
+        t._update_data(modified, remove_missing=True, update_original=True)  # pylint: disable=protected-access
+        t.save()
 
     if not quiet:
         subprocess.Popen(["task", "information", task_id])
