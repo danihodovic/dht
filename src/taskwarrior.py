@@ -1,4 +1,5 @@
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name,too-many-locals
+
 import json
 import subprocess
 from datetime import timedelta
@@ -6,27 +7,45 @@ from datetime import timedelta
 import click
 import dateutil.parser
 import yaml
+from click_didyoumean import DYMGroup
 from tasklib import Task, TaskWarrior
 from tasklib.serializing import SerializingObject
 
 
-@click.group()
+@click.group(cls=DYMGroup)
 def task():
     pass
 
 
+quiet = click.option(
+    "--quiet/--no-quiet",
+    default=False,
+    show_default=True,
+)
+
+
+def stop_currently_running_task(quiet=False):
+    tw = TaskWarrior(data_location="~/.task", create=False)
+    active_tasks = tw.tasks.filter("+ACTIVE -DELETED")
+    for active_task in active_tasks:
+        active_task.stop()
+        if not quiet:
+            click.secho(f"Stopped task {active_task['id']}", fg="green")
+
+
 @task.command()
+@quiet
 @click.argument("task_id")
-@click.pass_context
-def start(ctx, task_id):
+def start(task_id, quiet):
     """
     Unlike `task start` it stops the active task and starts another task. Two
     tasks should not run in parallell.
     """
-    ctx.invoke(stop)
+    stop_currently_running_task(quiet=quiet)
     tw = TaskWarrior(data_location="~/.task", create=False)
     tw.tasks.get(id=task_id).start()
-    click.secho(f"Started task {task_id}", fg="green")
+    if not quiet:
+        click.secho(f"Started task {task_id}", fg="green")
 
 
 @task.command()
@@ -34,11 +53,7 @@ def stop():
     """
     Unlike `task start` it only stops currently running tasks
     """
-    tw = TaskWarrior(data_location="~/.task", create=False)
-    active_tasks = tw.tasks.filter("+ACTIVE -DELETED")
-    for active_task in active_tasks:
-        active_task.stop()
-        click.secho(f"Stopped task {active_task['id']}", fg="green")
+    stop_currently_running_task()
 
 
 @task.command()
@@ -61,15 +76,12 @@ def done(task_id):
 
 @task.command()
 @click.argument("task_id", required=True)
-@click.option(
-    "--quiet/--no-quiet",
-    default=False,
-    show_default=True,
-)
+@quiet
 def edit(task_id, quiet):
     """
     Opens an editor to modify the file in yaml
     """
+
     tw = TaskWarrior(data_location="~/.task", create=False)
     try:
         t = tw.tasks.get(id=task_id)

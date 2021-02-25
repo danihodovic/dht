@@ -12,7 +12,7 @@ tasks:
   build-binary:
     desc: Creates a cross platform binary
     cmds:
-      - pyinstaller cli.py -y
+      - pyinstaller main_cli.py -y
         --onefile
         --hidden-import gitlab.v4.objects
         --name dht
@@ -21,11 +21,18 @@ tasks:
   build-fat-binary:
     desc: Creates a faster to boot binary for use outside of server environments
     cmds:
-      - pyinstaller cli.py -y
+      - pyinstaller main_cli.py -y
         --hidden-import gitlab.v4.objects
         --name dht
         --distpath /opt/
-      - sudo dht install
+      - sudo /opt/dht/dht install
+
+  build-fat-binary-taskwarrior:
+    desc: Creats a fat taskwarrior binary
+    cmds:
+      - pyinstaller taskwarrior_cli.py -y
+        --name tasktools
+        --distpath /opt/
 
   release:
     desc: Creates a Github release
