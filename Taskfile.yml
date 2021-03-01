@@ -12,17 +12,23 @@ tasks:
   build-binary:
     desc: Creates a cross platform binary
     cmds:
-      - pyinstaller main_cli.py -y
-        --onefile
-        --hidden-import gitlab.v4.objects
-        --name dht
+      - pyinstaller dht.onefile.spec
       - staticx ./dist/dht ./dist/dht
+
+  build-musl-binary:
+    cmds:
+      - docker build -f Dockerfile.alpine -t dht-musl .
+      - mkdir -p ./dist/musl
+      - docker rm dht-musl || true
+      - docker create --name=dht-musl dht-musl
+      - docker cp dht-musl:/usr/local/bin/dht ./dist/musl/
 
   build-fat-binary:
     desc: Creates a faster to boot binary for use outside of server environments
     cmds:
       - pyinstaller main_cli.py -y
         --hidden-import gitlab.v4.objects
+        --exclude-module PyInstaller
         --name dht
         --distpath /opt/
       - sudo /opt/dht/dht install
@@ -32,11 +38,12 @@ tasks:
     cmds:
       - pyinstaller taskwarrior_cli.py -y
         --name tasktools
+        --exclude-module PyInstaller
         --distpath /opt/
 
   release:
     desc: Creates a Github release
-    deps: [build]
+    deps: [build, build-musl-binary]
     cmds:
       - git tag --delete latest
       - git tag -a latest -m 'Latest build'
@@ -59,4 +66,11 @@ tasks:
         --tag latest
         --name dht
         --file ./dist/dht
+      - >
+        github-release upload
+        --user danihodovic
+        --repo dht
+        --tag latest
+        --name dht.musl
+        --file ./dist/musl/dht
       - docker push depode/dht
