@@ -1,0 +1,23 @@
+FROM python:3.9-alpine as builder
+
+RUN apk add gcc musl-dev libffi-dev curl openssl-dev rust cargo patchelf zlib-dev git
+RUN pip install --upgrade pip poetry
+
+WORKDIR /app/
+COPY pyproject.toml poetry.lock /app/
+RUN poetry config virtualenvs.create false && poetry install --no-interaction
+
+RUN export PYINSTALLER_TAG=v4.0 && \
+    git clone --depth 1 --single-branch --branch ${PYINSTALLER_TAG} https://github.com/pyinstaller/pyinstaller.git /tmp/pyinstaller \
+    && cd /tmp/pyinstaller/bootloader \
+    && CFLAGS="-Wno-stringop-overflow -Wno-stringop-truncation" python ./waf configure --no-lsb all \
+    && pip install .. \
+    && rm -Rf /tmp/pyinstaller
+
+COPY . /app/
+RUN pyinstaller dht.onefile.spec
+
+FROM alpine:latest
+RUN apk add git
+COPY --from=builder /app/dist/dht /usr/local/bin/dht
+ENTRYPOINT ["/usr/local/bin/dht"]
