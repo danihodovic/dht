@@ -69,7 +69,7 @@ def download_markdown(repo, out):
 @click.option(
     "--format",
     type=click.Choice(["epub", "pdf"], case_sensitive=False),
-    default="pdf",
+    default="epub",
     show_default=True,
 )
 def download_readthedocs(url, out, format):
