@@ -36,10 +36,7 @@ tasks:
   build-fat-binary-taskwarrior:
     desc: Creats a fat taskwarrior binary
     cmds:
-      - pyinstaller taskwarrior_cli.py -y
-        --name tasktools
-        --exclude-module PyInstaller
-        --distpath /opt/
+      - pyinstaller tasktools.spec --distpath /opt/
 
   release:
     desc: Creates a Github release
