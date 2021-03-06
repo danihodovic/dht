@@ -2,10 +2,9 @@
 
 import json
 import subprocess
-from datetime import timedelta
 
+import arrow
 import click
-import dateutil.parser
 import yaml
 from click_didyoumean import DYMGroup
 from tasklib import Task, TaskWarrior
@@ -96,7 +95,7 @@ def edit(task_id, quiet):
             del as_dict[key]
 
     if "due" in as_dict:
-        due = dateutil.parser.parse(as_dict["due"]) + timedelta(days=1)
+        due = arrow.get(as_dict["due"]).shift(days=1)
         as_dict["due"] = due.strftime("%Y-%m-%d")
 
     result = click.edit("---\n" + yaml.dump(as_dict), extension=".yaml")
@@ -106,7 +105,7 @@ def edit(task_id, quiet):
     modified = yaml.load(result, yaml.FullLoader)
     if "due" in modified:
         serializer = SerializingObject(t.backend)
-        due = dateutil.parser.parse(modified["due"])
+        due = arrow.get(modified["due"])
         modified["due"] = serializer.timestamp_serializer(due)
     t._update_data(modified)  # pylint: disable=protected-access
     t.save()
