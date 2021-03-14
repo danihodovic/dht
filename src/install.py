@@ -9,6 +9,14 @@ from .utils import require_root
 @click.command()
 @require_root
 def install():
+    """
+    Installs the dht helper scripts in /usr/local/bin/
+
+    \b
+    - dht
+    - tasktools
+    - dht_notify
+    """
     write_executable(
         "/usr/local/bin/dht",
         """
