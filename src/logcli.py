@@ -103,3 +103,8 @@ def open_ssh_tunnel(remote_host, remote_port, local_port):
         ping_until("localhost", local_port, quiet=True)
         halo.succeed()
         return ssh_tunnel
+
+
+# Configure remotes
+# On first request open ssh tunnel, store value
+# On subsequent requests re-use
