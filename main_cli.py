@@ -13,6 +13,7 @@ from src.i3 import i3
 from src.install import install
 from src.jobber import jobber
 from src.json_tools import jsontools
+from src.ledger import ledger
 from src.logcli import logcli
 from src.molecule import molecule
 from src.postgres.cmd import postgres
@@ -47,5 +48,6 @@ cli.add_command(logcli)
 cli.add_command(download_markdown)
 cli.add_command(download_readthedocs)
 cli.add_command(jsontools)
+cli.add_command(ledger)
 
 cli()
