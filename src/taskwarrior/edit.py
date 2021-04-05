@@ -4,10 +4,10 @@ import subprocess
 import arrow
 import click
 import yaml
-from tasklib import Task, TaskWarrior
+from tasklib import Task
 from tasklib.serializing import SerializingObject
 
-from .cmd import quiet, task
+from .cmd import quiet, task, tw
 
 
 @task.command()
@@ -17,8 +17,6 @@ def edit(task_id, quiet):
     """
     Opens an editor to modify the file in yaml
     """
-
-    tw = TaskWarrior(data_location="~/.task", create=False)
     try:
         t = tw.tasks.get(id=task_id)
     except Task.DoesNotExist as ex:

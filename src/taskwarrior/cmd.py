@@ -8,6 +8,9 @@ def task():
     pass
 
 
+tw = TaskWarrior(data_location="~/.task", create=False)
+
+
 quiet = click.option(
     "--quiet/--no-quiet",
     default=False,
@@ -16,7 +19,6 @@ quiet = click.option(
 
 
 def stop_currently_running_task(quiet=False):
-    tw = TaskWarrior(data_location="~/.task", create=False)
     active_tasks = tw.tasks.filter("+ACTIVE -DELETED")
     for active_task in active_tasks:
         active_task.stop()

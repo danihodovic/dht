@@ -1,7 +1,6 @@
 import click
-from tasklib import TaskWarrior
 
-from .cmd import task
+from .cmd import task, tw
 
 
 @task.command()
@@ -10,7 +9,6 @@ def done(task_id):
     """
     Completes the currently running task or a task id if provided.
     """
-    tw = TaskWarrior(data_location="~/.task", create=False)
     if task_id:
         t = tw.tasks.get(id=task_id)
         t.done()
