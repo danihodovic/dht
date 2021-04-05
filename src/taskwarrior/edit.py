@@ -10,6 +10,16 @@ from tasklib.serializing import SerializingObject
 from .cmd import quiet, task, tw
 
 
+def rewrite_dates_to_taskwarrior_format(backend, data):
+    dates_cols = ("due", "wait")
+    for col in dates_cols:
+        if col in data:
+            serializer = SerializingObject(backend)
+            due = arrow.get(data[col])
+            data[col] = serializer.timestamp_serializer(due)
+    return data
+
+
 @task.command()
 @click.argument("task_id", required=True)
 @quiet
@@ -38,10 +48,7 @@ def edit(task_id, quiet):
         raise click.Abort()
 
     modified = yaml.load(result, yaml.FullLoader)
-    if "due" in modified:
-        serializer = SerializingObject(t.backend)
-        due = arrow.get(modified["due"])
-        modified["due"] = serializer.timestamp_serializer(due)
+    rewrite_dates_to_taskwarrior_format(t.backend, modified)
     t._update_data(modified)  # pylint: disable=protected-access
     t.save()
 
