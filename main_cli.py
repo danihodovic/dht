@@ -13,7 +13,7 @@ from src.i3 import i3
 from src.install import install
 from src.jobber import jobber
 from src.json_tools import jsontools
-from src.ledger import ledger
+from src.ledger.cmd import ledger
 from src.logcli import logcli
 from src.molecule import molecule
 from src.postgres.cmd import postgres
