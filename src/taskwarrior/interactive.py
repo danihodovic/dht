@@ -45,7 +45,10 @@ def interactive(ctx, task_filters):
     task_cmd = f"task {filters} list"
     # pylint: disable=line-too-long
     fzf_delete_task = f"ctrl-x:reload(task {{1}} delete {silence_task} && eval {task_cmd})+clear-query"
-    fzf_options = f"--bind '{fzf_delete_task}' --expect=ctrl-e"
+    fzf_complete_task = (
+        f"ctrl-f:reload(task done {{1}} {silence_task} && eval {task_cmd})+clear-query"
+    )
+    fzf_options = f"--bind '{fzf_delete_task},{fzf_complete_task}' --expect=ctrl-e"
     selected = run_fzf(task_cmd, fzf_options)
 
     if is_edit_key(selected):
