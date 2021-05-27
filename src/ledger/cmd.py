@@ -3,6 +3,8 @@ from pathlib import Path
 
 import click
 
+MAX_DESCRIPTION_LENGTH = 90
+
 
 @click.group()
 def ledger():

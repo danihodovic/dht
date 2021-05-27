@@ -2,7 +2,7 @@ import csv
 
 import arrow
 
-from .cmd import in_file, ledger, out_file, write_csv
+from .cmd import MAX_DESCRIPTION_LENGTH, in_file, ledger, out_file, write_csv
 
 
 def transform_row(row):
@@ -13,8 +13,8 @@ def transform_row(row):
         date = arrow.get(row[0], "DD.MM.YYYY")
     date = date.format("YYYY-MM-DD")
     description = row[3]
-    if len(description) > 20:
-        description = f"{description[0:40]}..."
+    if len(description) > MAX_DESCRIPTION_LENGTH:
+        description = f"{description[0:MAX_DESCRIPTION_LENGTH]}..."
     category = f"{row[2]} - {row[-1]}"
     value = row[4]
     return [date, description, category, value]
