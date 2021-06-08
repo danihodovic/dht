@@ -1,3 +1,3 @@
-from . import cmd, commerzbank, revolut
+from . import cmd, commerzbank, hellenic, revolut, wise
 
 __all__ = ["cmd"]
