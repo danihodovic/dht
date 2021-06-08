@@ -7,6 +7,7 @@ from src.cloudflare import cloudflare
 from src.django import django
 from src.docker_commands import docker
 from src.docs import download_markdown, download_readthedocs
+from src.email_tools import email_invoice_analyzer
 from src.git.cmd import git
 from src.grafana import grafana
 from src.i3 import i3
@@ -49,5 +50,6 @@ cli.add_command(download_markdown)
 cli.add_command(download_readthedocs)
 cli.add_command(jsontools)
 cli.add_command(ledger)
+cli.add_command(email_invoice_analyzer)
 
 cli()
