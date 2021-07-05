@@ -45,6 +45,7 @@ from .cmd import git as git_cmd  # pylint: disable=import-error
     "--gitlab-token",
     default=lambda: os.environ.get("GITLAB_TOKEN", ""),
 )
+@click.option("--reviewer", "-r", "reviewers", multiple=True)
 @click.pass_context
 def pull_request(
     ctx,
@@ -54,6 +55,7 @@ def pull_request(
     open_url,
     github_token,
     gitlab_token,
+    reviewers,
 ):
     """
     A command to simplify pull request creation.
@@ -133,6 +135,10 @@ def create_github_pull_request(repo):
                 state="open", base="master", head=repo.active_branch.name
             )
         )[0]
+
+    reviewers = ctx.params["reviewers"]
+    if reviewers:
+        pull_request.create_review_request(reviewers=reviewers)
     return pull_request.html_url
 
 
