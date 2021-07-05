@@ -17,6 +17,7 @@ def write_csv(csv_reader, outfile, transform_fn):
         for row in csv_reader:
             transformed = transform_fn(row)
             writer.writerow(transformed)
+    click.secho(f"Wrote {outfile}", fg="green", bold=True)
 
 
 def in_file():
