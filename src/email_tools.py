@@ -61,10 +61,15 @@ def pdf_attachment(mail):
 
 
 def possible_invoice(mail):
+    keywords = ["payment", "order", "invoice", "receipt"]
+    for keyword in keywords:
+        if keyword in mail["Subject"].lower():
+            return True
+
     for part in mail.walk():
         if part.get_content_type() in ["text/plain", "text/html"]:
             text = part.as_string().lower()
-            for keyword in ["payment", "order", "invoice", "receipt"]:
+            for keyword in keywords:
                 if keyword in text:
                     return True
     return False
