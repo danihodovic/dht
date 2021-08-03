@@ -4,6 +4,7 @@ from click_didyoumean import DYMGroup
 
 from src.alertmanager import alertmanager
 from src.cloudflare import cloudflare
+from src.debug_error import debug_error
 from src.django import django
 from src.docker_commands import docker
 from src.docs import download_markdown, download_readthedocs
@@ -51,5 +52,6 @@ cli.add_command(download_readthedocs)
 cli.add_command(jsontools)
 cli.add_command(ledger)
 cli.add_command(email_invoice_analyzer)
+cli.add_command(debug_error)
 
 cli()
