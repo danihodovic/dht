@@ -74,8 +74,8 @@ def download_markdown(repo, out):
 )
 def download_readthedocs(url, out, format):
     fname = re.match("https://([A-Za-z1-9_-]+.readthedocs)", url).groups()[0]
-    pdf_url = f"https://{fname}.io/_/downloads/en/stable/{format}/"
-    res = http.get(pdf_url)
+    url = f"https://{fname}.io/_/downloads/en/stable/{format}/"
+    res = http.get(url)
     if not out:
         out = (Path(".") / fname).with_suffix(f".{format}")
     elif os.path.isdir(out):
