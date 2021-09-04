@@ -13,8 +13,8 @@ from dateutil import parser
     "--source-dir",
     required=True,
 )
-@click.option("--start", required=False, type=click.DateTime())
-@click.option("--end", required=False, type=click.DateTime())
+@click.option("--start", required=True, type=click.DateTime())
+@click.option("--end", required=True, type=click.DateTime())
 @click.option(
     "--out",
     type=click.Path(
@@ -24,6 +24,18 @@ from dateutil import parser
 )
 @click.command()
 def email_invoice_analyzer(source_dir, start, end, out):
+    """
+    Finds receipts for accounting in emails.
+    Use in conjunction with https://github.com/jay0lee/got-your-back
+
+    Usage:
+    # Back up your gmail messages
+    ./bin/gyb/gyb --email you@love.com --action backup
+
+    # Write any invoice or receipt looking pdf to $PWD/emails.tgz
+    dht email-invoice-analyzer --source-dir ~/GYB-GMail-Backup-dani@honeylogic.io
+    --start 2021-06-01 --end $(date +%Y-%m-%d)
+    """
     start = pytz.utc.localize(start)
     end = pytz.utc.localize(end)
     tmpdir = Path(tempfile.mkdtemp(prefix="dht-email-receipts-"))
@@ -33,15 +45,23 @@ def email_invoice_analyzer(source_dir, start, end, out):
             if filename.endswith(".eml"):
                 path = Path(dirpath) / filename
                 with open(path) as f:
-                    mail = email.message_from_file(f)
+                    try:
+                        mail = email.message_from_file(f)
+                    except UnicodeDecodeError:
+                        click.secho(
+                            f"Failed to read message_from_file for `{path}`", fg="red"
+                        )
+                        continue
                     pdf = pdf_attachment(mail)
                     date = parser.parse(mail["Date"])
                     if pdf and possible_invoice(mail) and date > start:
                         filename = pdf.get_filename().replace("\n", "-")
-                        with open(tmpdir / filename, "wb") as f:
-                            f.write(pdf.get_payload(decode=True))
-                        print("written", filename)
-                        print()
+                        try:
+                            with open(tmpdir / filename, "wb") as f:
+                                f.write(pdf.get_payload(decode=True))
+                            click.secho(f"Wrote: {filename}", fg="green")
+                        except FileNotFoundError:
+                            click.secho(f"Failed to write {filename}", fg="red")
 
     with tarfile.open(out, "w:gz") as tar:
         tar.add(tmpdir, arcname=os.path.basename(tmpdir))
