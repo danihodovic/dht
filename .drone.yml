@@ -44,6 +44,7 @@ steps:
       - black . --check
       - isort --check-only .
       - pylint src
+      - pytest .
 
   - name: test-binary
     depends_on: [install-dependencies]

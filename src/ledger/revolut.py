@@ -8,6 +8,13 @@ def transform_revolut_row(revolut_row):
     description = revolut_row[1].strip()
     category = revolut_row[-2].strip()
     transaction = None
+
+    # Revolut generates shitty csv reports that don't match the columns, so we
+    # have to perform some heuristics here.
+    if "Fee:" in revolut_row[2].strip():
+        transaction = -float(revolut_row[3].strip())
+        return [date, description, transaction, category]
+
     try:
         paid_out = float(revolut_row[2].strip())
         transaction = -paid_out
