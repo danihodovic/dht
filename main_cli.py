@@ -22,6 +22,7 @@ from src.postgres.cmd import postgres
 from src.process import kill_process
 from src.redis import redis
 from src.samson import samson
+from src.shutdown_notify import shutdown_notify
 
 # https://github.com/pallets/click/issues/448#issuecomment-246029304
 click.core._verify_python3_env = lambda: None  # pylint: disable=protected-access
@@ -46,6 +47,7 @@ cli.add_command(redis)
 cli.add_command(jobber)
 cli.add_command(install)
 cli.add_command(kill_process)
+cli.add_command(shutdown_notify)
 cli.add_command(logcli)
 cli.add_command(download_markdown)
 cli.add_command(download_readthedocs)
