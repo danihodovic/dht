@@ -10,13 +10,10 @@ from .cmd import git
 
 
 @git.command()
-@click.option(
-    "--directory",
-    "-d",
+@click.argument(
+    "directory",
     type=click.Path(exists=True, dir_okay=True, file_okay=False),
-    help="The directory to walk",
     default=os.getcwd,
-    show_default=True,
 )
 @click.option(
     "--skip-git-subdir/--no-skip-git-subdir",
