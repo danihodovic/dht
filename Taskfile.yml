@@ -34,9 +34,9 @@ tasks:
       - sudo /opt/dht/dht install
 
   build-fat-binary-taskwarrior:
-    desc: Creats a fat taskwarrior binary
+    desc: Creates a fat taskwarrior binary
     cmds:
-      - pyinstaller tasktools.spec --distpath /opt/ --noconfirm
+      - pyinstaller tasktools.spec --distpath /opt/ --noconfirm --clean
 
   release:
     desc: Creates a Github release
