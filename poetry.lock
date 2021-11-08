@@ -921,8 +921,8 @@ pyelftools = "*"
 
 [[package]]
 name = "tasklib"
-version = "2.2.1"
-description = "Python Task Warrior library"
+version = "2.4.3"
+description = "Official Taskwarrior library for Python"
 category = "main"
 optional = false
 python-versions = "*"
@@ -1064,7 +1064,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "aac3939daaf1ae4f071f019a8e55d235a41a88884f9d3bdcaedf2156f0c01752"
+content-hash = "5ed75e510163876a632af377f2d5d5c879075435fa05828919a142fa3df39e38"
 
 [metadata.files]
 altgraph = [
@@ -1578,7 +1578,7 @@ staticx = [
     {file = "staticx-0.11.0.tar.gz", hash = "sha256:26b06512052707e8c9eea40f6c794e54f5376c289a0e7429124313bc5bb0981b"},
 ]
 tasklib = [
-    {file = "tasklib-2.2.1.tar.gz", hash = "sha256:21525a34469928876b64edf8abf79cf788bb3fa796d4554ba22a68bc1f0693f5"},
+    {file = "tasklib-2.4.3.tar.gz", hash = "sha256:b523bc12893d26c8173a6b8d84b16259c9a9c5acaaf8932bc018117f907b3bc5"},
 ]
 tenacity = [
     {file = "tenacity-6.3.1-py2.py3-none-any.whl", hash = "sha256:baed357d9f35ec64264d8a4bbf004c35058fad8795c5b0d8a7dc77ecdcbb8f39"},
