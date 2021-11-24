@@ -330,6 +330,14 @@ requirements_deprecated_finder = ["pipreqs", "pip-api"]
 colors = ["colorama (>=0.4.3,<0.5.0)"]
 
 [[package]]
+name = "iterfzf"
+version = "0.5.0.20.0"
+description = "Pythonic interface to fzf"
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4"
+
+[[package]]
 name = "jedi"
 version = "0.17.2"
 description = "An autocompletion tool for Python that can be used for text editors."
@@ -1064,7 +1072,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "5ed75e510163876a632af377f2d5d5c879075435fa05828919a142fa3df39e38"
+content-hash = "8698cf1fb97cc07f5095b14ffaf5a7ecba5fcf9120920412a6eb28a7f10aea55"
 
 [metadata.files]
 altgraph = [
@@ -1226,6 +1234,15 @@ ipython-genutils = [
 isort = [
     {file = "isort-5.7.0-py3-none-any.whl", hash = "sha256:fff4f0c04e1825522ce6949973e83110a6e907750cd92d128b0d14aaaadbffdc"},
     {file = "isort-5.7.0.tar.gz", hash = "sha256:c729845434366216d320e936b8ad6f9d681aab72dc7cbc2d51bedc3582f3ad1e"},
+]
+iterfzf = [
+    {file = "iterfzf-0.5.0.20.0-py2.py3-none-macosx_10_10_i386.macosx_10_11_i386.macosx_10_12_i386.whl", hash = "sha256:eb6279465a8384c61c4a08867de65babca6584eabc620847ba7ce5b8afe59ae7"},
+    {file = "iterfzf-0.5.0.20.0-py2.py3-none-macosx_10_10_intel.macosx_10_10_x86_64.macosx_10_11_intel.macosx_10_11_x86_64.macosx_10_12_intel.macosx_10_12_x86_64.whl", hash = "sha256:ebf54265e70154d166d6e56f9314a375ce8752937e6faf6f4fd72477472772f6"},
+    {file = "iterfzf-0.5.0.20.0-py2.py3-none-manylinux1_i686.whl", hash = "sha256:5d19abc3e4ae31af575835e4ffa0215327864a5123d200682e9d68dc2166558d"},
+    {file = "iterfzf-0.5.0.20.0-py2.py3-none-manylinux1_x86_64.whl", hash = "sha256:1461f482949d6b0441031722f101c44ac74e60cc3f5b04a9568b3da5aac8a7f2"},
+    {file = "iterfzf-0.5.0.20.0-py2.py3-none-win32.whl", hash = "sha256:c95f3c9b96eb6c84db13cadb75d8d8c1d417670f87e23aeb363dbf4b777374fe"},
+    {file = "iterfzf-0.5.0.20.0-py2.py3-none-win_amd64.whl", hash = "sha256:615d4b8aef12717774254c8b656cc8d0ff94b3651cd77359478d7d0646d69f6e"},
+    {file = "iterfzf-0.5.0.20.0.tar.gz", hash = "sha256:2b6f04d87a7cba79d03c2bb83575bb4580f47502dc024a24fc5dc8c0cfbcc52f"},
 ]
 jedi = [
     {file = "jedi-0.17.2-py2.py3-none-any.whl", hash = "sha256:98cc583fa0f2f8304968199b01b6b4b94f469a1f4a74c1560506ca2a211378b5"},
