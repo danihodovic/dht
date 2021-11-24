@@ -37,7 +37,6 @@ arrow = "^1.0.2"
 libtmux = "^0.10.1"
 pynvim = "^0.4.3"
 notify-py = "^0.3.3"
-iterfzf = "^0.5.0"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.6.0"

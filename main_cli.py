@@ -18,6 +18,7 @@ from src.json_tools import jsontools
 from src.ledger.cmd import ledger
 from src.logcli import logcli
 from src.molecule import molecule
+from src.openapi import generate_openapi_client
 from src.postgres.cmd import postgres
 from src.process import kill_process
 from src.redis import redis
@@ -55,5 +56,6 @@ cli.add_command(jsontools)
 cli.add_command(ledger)
 cli.add_command(email_invoice_analyzer)
 cli.add_command(debug_error)
+cli.add_command(generate_openapi_client)
 
 cli()
