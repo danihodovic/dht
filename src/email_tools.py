@@ -5,6 +5,7 @@ import tempfile
 from pathlib import Path
 
 import click
+import dateutil
 import pytz
 from dateutil import parser
 
@@ -12,6 +13,12 @@ from dateutil import parser
 @click.option(
     "--source-dir",
     required=True,
+    type=click.Path(
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        resolve_path=False,
+    ),
 )
 @click.option("--start", required=True, type=click.DateTime())
 @click.option("--end", required=True, type=click.DateTime())
@@ -30,12 +37,14 @@ def email_invoice_analyzer(source_dir, start, end, out):
 
     Usage:
     # Back up your gmail messages
-    ./bin/gyb/gyb --email you@love.com --action backup
+    gyb --action create-project --email you@love.com
+    gyb --email you@love.com --action backup
 
     # Write any invoice or receipt looking pdf to $PWD/emails.tgz
-    dht email-invoice-analyzer --source-dir ~/GYB-GMail-Backup-dani@honeylogic.io
+    dht email-invoice-analyzer --source-dir ~/GYB-GMail-Backup-you@love.com
     --start 2021-06-01 --end $(date +%Y-%m-%d)
     """
+    # pylint: disable=too-many-locals
     start = pytz.utc.localize(start)
     end = pytz.utc.localize(end)
     tmpdir = Path(tempfile.mkdtemp(prefix="dht-email-receipts-"))
@@ -53,7 +62,16 @@ def email_invoice_analyzer(source_dir, start, end, out):
                         )
                         continue
                     pdf = pdf_attachment(mail)
-                    date = parser.parse(mail["Date"])
+                    try:
+                        date = parser.parse(mail["Date"])
+                        # pylint: disable=protected-access
+                    except dateutil.parser._parser.ParserError:
+                        click.secho(
+                            f"Failed to parse email due to date {mail['Date']=}",
+                            fg="red",
+                        )
+                        continue
+
                     if pdf and possible_invoice(mail) and date > start:
                         filename = pdf.get_filename().replace("\n", "-")
                         try:
