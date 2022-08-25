@@ -73,7 +73,15 @@ def email_invoice_analyzer(source_dir, start, end, out):
                         continue
 
                     if pdf and possible_invoice(mail) and date > start:
-                        filename = pdf.get_filename().replace("\n", "-")
+                        filename = pdf.get_filename()
+                        if not filename:
+                            subject = mail["subject"]
+                            click.secho(
+                                f"Warning - pdf has no filename {subject=}", fg="red"
+                            )
+                            continue
+
+                        filename = filename.replace("\n", "-")
                         try:
                             with open(tmpdir / filename, "wb") as f:
                                 f.write(pdf.get_payload(decode=True))
