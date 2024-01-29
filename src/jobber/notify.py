@@ -5,13 +5,15 @@ import sys
 import click
 from click.testing import CliRunner
 
+from .cmd import jobber as jobber_cmd
+
 
 @click.group()
 def jobber():
     pass
 
 
-@jobber.command()
+@jobber_cmd.command()
 @click.option(
     "--run-record",
     help="A Jobber run record in json",
@@ -37,7 +39,7 @@ def notify(run_record):
     )
 
 
-@jobber.command()
+@jobber_cmd.command()
 def test_notify():
     run_record = {
         "version": "1.4",

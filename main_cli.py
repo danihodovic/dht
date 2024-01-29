@@ -14,7 +14,7 @@ from src.git.cmd import git
 from src.grafana import grafana
 from src.i3 import i3
 from src.install import install
-from src.jobber import jobber
+from src.jobber.cmd import jobber
 from src.json_tools import jsontools
 from src.ledger import detect_duplicates
 from src.ledger.cmd import ledger
