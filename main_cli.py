@@ -16,10 +16,9 @@ from src.i3 import i3
 from src.install import install
 from src.jobber.cmd import jobber
 from src.json_tools import jsontools
-from src.ledger import detect_duplicates
-from src.ledger.cmd import ledger
 from src.logcli import logcli
 from src.molecule import molecule
+from src.obsidian_tooling.clean_up_empty_files import clean_up_empty_files
 from src.openapi import generate_openapi_client
 from src.postgres.cmd import postgres
 from src.process import kill_process
