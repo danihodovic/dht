@@ -1,5 +1,4 @@
 import click
-import pretty_errors  # pylint: disable=unused-import
 from click_didyoumean import DYMGroup
 
 from src.alertmanager import alertmanager
@@ -18,7 +17,6 @@ from src.jobber.cmd import jobber
 from src.json_tools import jsontools
 from src.logcli import logcli
 from src.molecule import molecule
-from src.obsidian_tooling.clean_up_empty_files import clean_up_empty_files
 from src.openapi import generate_openapi_client
 from src.postgres.cmd import postgres
 from src.process import kill_process
@@ -54,7 +52,6 @@ cli.add_command(logcli)
 cli.add_command(download_markdown)
 cli.add_command(download_readthedocs)
 cli.add_command(jsontools)
-cli.add_command(ledger)
 cli.add_command(email_invoice_analyzer)
 cli.add_command(debug_error)
 cli.add_command(generate_openapi_client)

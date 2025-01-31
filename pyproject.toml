@@ -14,18 +14,18 @@ description = ""
 authors = ["Dani Hodovic <dani.hodovic@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "3.9.1"
-click = "^7.1.2"
+python = ">=3.10,<3.13"
+click = "^8.1.8"
 requests = "^2.24.0"
 docker = "^4.3.1"
-requests-toolbelt = "^0.9.1"
+requests-toolbelt = "^1.0.0"
 GitPython = "^3.1.11"
 PyGithub = "^1.53"
 python-gitlab = "^2.5.0"
 halo = "^0.0.31"
 giturlparse = "^0.10.0"
 tasklib = "^2.4.3"
-PyYAML = "^5.3.1"
+PyYAML = "^6.0.2"
 pyfzf = "^0.2.2"
 redis = "^3.5.3"
 contexttimer = "^0.3.3"
@@ -38,9 +38,10 @@ libtmux = "^0.10.1"
 pynvim = "^0.4.3"
 notify-py = "^0.3.3"
 
-[tool.poetry.dev-dependencies]
-pylint = "^2.6.0"
-isort = "^5.5.1"
+[tool.poetry.group.dev]
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.9.4"
+isort = "^6.0.0"
 wrapt = "^1.12.1"
 pyinstaller = "^5.3"
 jedi = "^0.17.2"
@@ -50,7 +51,8 @@ six = "^1.15.0"
 pudb = "^2019.2"
 ptipython = "^1.0.1"
 pytest = "^6.2.5"
-black = "^21.10b0"
+black = "^25.1.0"
+pre-commit = "^4.1.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0a5"]
