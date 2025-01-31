@@ -12,6 +12,7 @@ name = "tools"
 version = "0.0.1"
 description = ""
 authors = ["Dani Hodovic <dani.hodovic@gmail.com>"]
+package-mode = false
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.13"
@@ -35,8 +36,9 @@ tenacity = "^6.3.1"
 click-didyoumean = "^0.0.3"
 arrow = "^1.0.2"
 libtmux = "^0.10.1"
-pynvim = "^0.4.3"
+pynvim = "^0.5.2"
 notify-py = "^0.3.3"
+pytz = "^2025.1"
 
 [tool.poetry.group.dev]
 [tool.poetry.group.dev.dependencies]
