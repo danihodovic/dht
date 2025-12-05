@@ -3,6 +3,7 @@ from click_didyoumean import DYMGroup
 
 from src.alertmanager import alertmanager
 from src.cloudflare import cloudflare
+from src.code_tools.diff_dirs import compare_directories
 from src.debug_error import debug_error
 from src.django import django
 from src.docker_commands import docker
@@ -11,10 +12,9 @@ from src.email_tools import email_invoice_analyzer
 from src.filetools.rename import rename_file_extension
 from src.git.cmd import git
 from src.grafana import grafana
-from src.i3 import i3
 from src.install import install
-from src.jobber.cmd import jobber
 from src.json_tools import jsontools
+from src.kubectl import k8s
 from src.logcli import logcli
 from src.molecule import molecule
 from src.openapi import generate_openapi_client
@@ -41,10 +41,8 @@ cli.add_command(samson)
 cli.add_command(git)
 cli.add_command(alertmanager)
 cli.add_command(django)
-cli.add_command(i3)
 cli.add_command(molecule)
 cli.add_command(redis)
-cli.add_command(jobber)
 cli.add_command(install)
 cli.add_command(kill_process)
 cli.add_command(shutdown_notify)
@@ -54,7 +52,9 @@ cli.add_command(download_readthedocs)
 cli.add_command(jsontools)
 cli.add_command(email_invoice_analyzer)
 cli.add_command(debug_error)
+cli.add_command(k8s)
 cli.add_command(generate_openapi_client)
 cli.add_command(rename_file_extension)
+cli.add_command(compare_directories)
 
 cli()
