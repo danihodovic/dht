@@ -2,5 +2,5 @@ import click
 
 
 @click.group()
-def jobber():
+def k8s():
     pass
