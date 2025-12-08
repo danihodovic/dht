@@ -28,6 +28,11 @@ tasks:
     cmds:
       - pyinstaller main_cli.py -y
         --hidden-import gitlab.v4.objects
+        --hidden-import llm.default_plugins
+        --hidden-import llm.default_plugins.openai_models
+        --hidden-import llm.default_plugins.default_tools
+        --hidden-import mistral
+        --collect-all=llm_mistral
         --exclude-module PyInstaller
         --name dht
         --distpath /opt/
