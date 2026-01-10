@@ -57,4 +57,5 @@ cli.add_command(debug_error)
 cli.add_command(generate_openapi_client)
 cli.add_command(rename_file_extension)
 
-cli()
+if __name__ == "__main__":
+    cli()

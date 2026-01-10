@@ -1,13 +1,10 @@
 import inspect
-import os
+import subprocess
 
 import click
 
-from .utils import require_root
-
 
 @click.command()
-@require_root
 def install():
     """
     Installs the dht helper scripts in /usr/local/bin/
@@ -21,7 +18,7 @@ def install():
         "/usr/local/bin/dht",
         """
         #!/bin/sh
-        /opt/dht/dht "$@"
+        uv run --directory ~/repos/dht.git/master --quiet -m dht "$@"
 """,
     )
 
@@ -44,7 +41,12 @@ def install():
 
 
 def write_executable(path, contents):
-    with open(str(path), "w") as f:
-        f.write(inspect.cleandoc(contents))
-        os.chmod(str(path), 0o775)
-        click.secho(f"Wrote {path}", bold=True)
+    content = inspect.cleandoc(contents)
+    subprocess.run(
+        ["sudo", "tee", path],
+        input=content.encode(),
+        stdout=subprocess.DEVNULL,
+        check=True,
+    )
+    subprocess.run(["sudo", "chmod", "755", path], check=True)
+    click.secho(f"Wrote {path}", bold=True)
