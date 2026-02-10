@@ -1,3 +1,4 @@
+import os
 import re
 import shutil
 import subprocess
@@ -13,7 +14,7 @@ from src.utils import cwd
 from .cmd import git as git_cmd
 
 SYSTEM_PROMPT = (
-    "You suggest short git branch names in kebab-case based on the files that changed. "
+    "You suggest short git branch names in kebab-case based on the code changes. "
     "Return only the branch name, no backticks or explanations."
 )
 
@@ -25,12 +26,18 @@ SYSTEM_PROMPT = (
     is_flag=True,
     help="Only copy files that are staged in git (ignores unstaged and untracked files).",
 )
+@click.option(
+    "--cd",
+    "cd_into",
+    is_flag=True,
+    help="Spawn an interactive shell in the new worktree (exit to return).",
+)
 @click.argument(
     "files",
     nargs=-1,
     required=True,
 )
-def new_worktree_from_changes(repo_dir, staged_only, files):
+def new_worktree_from_changes(repo_dir, staged_only, cd_into, files):
     """
     Create a new worktree and apply the specified file or directory changes to it.
     """
@@ -60,7 +67,7 @@ def new_worktree_from_changes(repo_dir, staged_only, files):
     if not diff and not untracked:
         raise click.UsageError("No changes detected in the provided files.")
 
-    branch_name = _suggest_branch_name(rel_files)
+    branch_name = _suggest_branch_name(diff)
     original_branch_name = branch_name
     counter = 1
     while True:
@@ -87,6 +94,12 @@ def new_worktree_from_changes(repo_dir, staged_only, files):
     )
     click.secho(f"cd {target_path}", fg="cyan")
 
+    if cd_into:
+        shell = os.environ.get("SHELL", "/bin/sh")
+        click.secho(f"Spawning shell in {target_path}... (exit to return)", fg="yellow")
+        os.chdir(target_path)
+        os.execvp(shell, [shell])
+
 
 def _relative_to_repo(path, repo_root):
     try:
@@ -95,8 +108,9 @@ def _relative_to_repo(path, repo_root):
         raise click.UsageError(f"File must be inside repo: {path}") from ex
 
 
-def _suggest_branch_name(files):
-    prompt = "Changed files:\n" + "\n".join(f"- {path}" for path in files)
+def _suggest_branch_name(diff: bytes):
+    diff_text = diff.decode("utf-8", errors="replace")
+    prompt = f"Git diff:\n```\n{diff_text}\n```"
     model = llm.get_model("devstral-small")
 
     try:
