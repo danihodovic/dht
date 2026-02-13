@@ -67,4 +67,4 @@ build-backend = "hatchling.build"
 packages = ["src", "dht"]
 
 [project.scripts]
-dht = "dht.__main__:cli"
+dht = "dht:cli"
