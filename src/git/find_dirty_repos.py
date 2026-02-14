@@ -3,7 +3,7 @@ from pathlib import Path
 
 import click
 
-from git import Repo  # pylint: disable=no-name-in-module
+from git import InvalidGitRepositoryError, Repo  # pylint: disable=no-name-in-module
 from src.utils import verbose
 
 from .cmd import git
@@ -33,14 +33,39 @@ from .cmd import git
     show_default=True,
     help="Print dirty files",
 )
+@click.option(
+    "--ignore-dirs",
+    multiple=True,
+    default=["taskwarrior"],
+    show_default=True,
+    help="Directory names to ignore",
+)
+@click.option(
+    "--ignore-paths",
+    multiple=True,
+    default=[
+        os.path.expanduser("~/backups/synced/journal"),
+        os.path.expanduser("~/backups/laptop/finances"),
+    ],
+    show_default=True,
+    help="Full paths to ignore",
+)
 @verbose
-def find_dirty_repos(directory, skip_git_subdir, skip_go_dirs, print_files, verbose):
+def find_dirty_repos(directory, skip_git_subdir, skip_go_dirs, print_files, ignore_dirs, ignore_paths, verbose):
     """
     Find repositories with unsaved changed to backup.
     """
     for dirpath, dirs, _ in os.walk(directory):
         if verbose:
             click.secho(f"Found {dirpath}", fg="green")
+
+        if ignore_dirs:
+            dirs[:] = [d for d in dirs if d not in ignore_dirs]
+
+        if ignore_paths:
+            dirs[:] = [
+                d for d in dirs if os.path.join(dirpath, d) not in ignore_paths
+            ]
 
         if skip_go_dirs:
             dirs[:] = [
@@ -49,13 +74,16 @@ def find_dirty_repos(directory, skip_git_subdir, skip_go_dirs, print_files, verb
                 if "go_pkg/src" not in dirpath and "go_pkg/pkg" not in dirpath
             ]
 
-        if os.path.isdir(dirpath) and os.path.isdir(str(Path(dirpath) / ".git")):
+        if os.path.isdir(dirpath) and os.path.exists(str(Path(dirpath) / ".git")):
             if skip_git_subdir:
                 dirs[:] = []
 
-            repo = Repo(dirpath)
+            try:
+                repo = Repo(dirpath)
+            except InvalidGitRepositoryError:
+                continue
             changed_files = [item.a_path for item in repo.index.diff(None)]
-            if not repo.untracked_files or not changed_files:
+            if not repo.untracked_files and not changed_files:
                 continue
 
             if print_files:
