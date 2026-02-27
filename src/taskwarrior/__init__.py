@@ -2,7 +2,6 @@ from . import (
     done,
     edit,
     interactive,
-    notify_missing_project,
     start,
     stop,
     timewarrior_hook,
