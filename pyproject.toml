@@ -36,7 +36,6 @@ dependencies = [
 [dependency-groups]
 dev = [
     "ruff>=0.9.4",
-    "isort>=6.0.0",
     "wrapt>=1.12.1",
     "pyinstaller>=6.17.0",
     "jedi>=0.17.2",
@@ -46,18 +45,8 @@ dev = [
     "pudb>=2019.2",
     "ptipython>=1.0.1",
     "pytest>=6.2.5",
-    "black>=25.1.0",
     "pre-commit>=4.1.0",
 ]
-
-[tool.black]
-skip_numeric_underscore_normalization = true
-exclude = ".*(venv|virtualenv|migrations|node_modules|s3)"
-
-[tool.isort]
-profile = "black"
-multi_line_output = 3
-skip = '.virtualenv,.venv'
 
 [build-system]
 requires = ["hatchling"]
