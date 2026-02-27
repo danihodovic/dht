@@ -55,9 +55,7 @@ docker://server/container/database
     hide_input=True,
     envvar="TO_PASSWORD",
 )
-def migrate(
-    from_db, to_db, from_password, to_password
-):  # pylint: disable=unused-argument
+def migrate(from_db, to_db, from_password, to_password):  # pylint: disable=unused-argument
     """
     pg_dump to pg_restore wrapper
     """

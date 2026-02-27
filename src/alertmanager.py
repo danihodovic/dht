@@ -131,10 +131,10 @@ def trigger_test_webhook(webhook_url, status):
 def format_sms(alert):
     # FIRING vs resolved
     status = alert["status"].upper()
-    text = f'Alert: {alert["labels"]["alertname"]} is {status}. '
+    text = f"Alert: {alert['labels']['alertname']} is {status}. "
     if "environment" in alert["labels"]:
-        text += f'Environment: {alert["labels"]["environment"]}.'
+        text += f"Environment: {alert['labels']['environment']}."
 
     if alert["status"] == "firing" and "description" in alert["annotations"]:
-        text += f'Description: {alert["annotations"]["description"]}'
+        text += f"Description: {alert['annotations']['description']}"
     return text
