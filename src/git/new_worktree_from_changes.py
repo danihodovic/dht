@@ -6,7 +6,6 @@ from pathlib import Path
 
 import click
 import llm
-import llm_mistral
 
 from git import Repo
 from src.utils import cwd
@@ -77,7 +76,9 @@ def new_worktree_from_changes(repo_dir, staged_only, cd_into, files):
         branch_name = f"{original_branch_name}-{counter}"
         counter += 1
 
-    repo.git.worktree("add", str(target_path), "-b", branch_name, repo.active_branch.name)
+    repo.git.worktree(
+        "add", str(target_path), "-b", branch_name, repo.active_branch.name
+    )
     new_repo = Repo(target_path)
 
     if diff:
@@ -177,4 +178,6 @@ def _ensure_on_branch(repo):
     try:
         _ = repo.active_branch
     except TypeError as ex:
-        raise click.UsageError("HEAD is detached; checkout a branch before running.") from ex
+        raise click.UsageError(
+            "HEAD is detached; checkout a branch before running."
+        ) from ex

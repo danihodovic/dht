@@ -7,4 +7,11 @@ from . import (
     squash,
 )
 
-__all__ = ["cmd"]
+__all__ = [
+    "cmd",
+    "clean_worktrees",
+    "find_dirty_repos",
+    "new_worktree_from_changes",
+    "pull_request",
+    "squash",
+]

@@ -17,7 +17,7 @@ def jsontools():
 )
 def sum_timedelta_rows(json_file, row_key):
     data = json.load(json_file)
-    if not row_key in data[0]:
+    if row_key not in data[0]:
         keys = list(data[0].keys())
         click.secho(
             f"Row key: '{row_key}' does not exist in json keys: {json.dumps(keys, indent=2)}",

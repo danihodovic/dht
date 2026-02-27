@@ -1,1 +1,1 @@
-from .cmd import kill_process
+from .cmd import kill_process as kill_process

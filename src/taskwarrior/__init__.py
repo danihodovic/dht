@@ -8,4 +8,4 @@ from . import (
 )
 from .cmd import task
 
-__all__ = ["task"]
+__all__ = ["task", "done", "edit", "interactive", "start", "stop", "timewarrior_hook"]

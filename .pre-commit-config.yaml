@@ -11,13 +11,11 @@ repos:
     rev: 25.1.0
     hooks:
       - id: black
-        language: system
 
   - repo: https://github.com/PyCQA/isort
     rev: 6.0.0
     hooks:
       - id: isort
-        language: system
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
