@@ -46,7 +46,7 @@ def download_markdown(repo, out):
             shell=True,
             check=True,
             env={
-                "PATH": f"PATH=$PATH:{Path.home()/'.n'/'bin'}",
+                "PATH": f"PATH=$PATH:{Path.home() / '.n' / 'bin'}",
             },
         )
 

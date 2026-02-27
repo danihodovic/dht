@@ -51,7 +51,15 @@ from .cmd import git
     help="Full paths to ignore",
 )
 @verbose
-def find_dirty_repos(directory, skip_git_subdir, skip_go_dirs, print_files, ignore_dirs, ignore_paths, verbose):
+def find_dirty_repos(
+    directory,
+    skip_git_subdir,
+    skip_go_dirs,
+    print_files,
+    ignore_dirs,
+    ignore_paths,
+    verbose,
+):
     """
     Find repositories with unsaved changed to backup.
     """
@@ -63,9 +71,7 @@ def find_dirty_repos(directory, skip_git_subdir, skip_go_dirs, print_files, igno
             dirs[:] = [d for d in dirs if d not in ignore_dirs]
 
         if ignore_paths:
-            dirs[:] = [
-                d for d in dirs if os.path.join(dirpath, d) not in ignore_paths
-            ]
+            dirs[:] = [d for d in dirs if os.path.join(dirpath, d) not in ignore_paths]
 
         if skip_go_dirs:
             dirs[:] = [

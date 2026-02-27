@@ -26,7 +26,7 @@ def shutdown_notify(minutes):
             content,
         ).group(1)
         now_seconds = time.time()
-        time_left_seconds = int(usec_str) / 10 ** 6 - now_seconds
+        time_left_seconds = int(usec_str) / 10**6 - now_seconds
         time_left = timedelta(seconds=int(time_left_seconds))
 
         if timedelta(minutes=minutes) >= time_left:
