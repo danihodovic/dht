@@ -11,7 +11,12 @@ import requests
 from pyfzf.pyfzf import FzfPrompt
 
 http = requests.Session()
-assert_status_hook = lambda response, *args, **kwargs: response.raise_for_status()
+
+
+def assert_status_hook(response, *args, **kwargs):
+    response.raise_for_status()
+
+
 http.hooks["response"] = [assert_status_hook]
 
 

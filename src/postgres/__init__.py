@@ -1,3 +1,3 @@
 from . import cmd, migrate
 
-__all__ = ["cmd"]
+__all__ = ["cmd", "migrate"]

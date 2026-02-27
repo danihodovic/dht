@@ -12,11 +12,11 @@ from halo import Halo
 
 from git import Repo  # pylint: disable=no-name-in-module
 from git.exc import GitCommandError  # pylint: disable=no-name-in-module,import-error
-
-pass_repo = click.make_pass_decorator(Repo)
 from src.utils import cwd
 
 from .cmd import git as git_cmd  # pylint: disable=import-error
+
+pass_repo = click.make_pass_decorator(Repo)
 
 
 @git_cmd.command()

@@ -1,5 +1,4 @@
 import click
-import pretty_errors  # pylint: disable=unused-import
 
 from src.taskwarrior import task
 
