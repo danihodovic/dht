@@ -111,7 +111,7 @@ def _relative_to_repo(path, repo_root):
 def _suggest_branch_name(diff: bytes):
     diff_text = diff.decode("utf-8", errors="replace")
     prompt = f"Git diff:\n```\n{diff_text}\n```"
-    model = llm.get_model("devstral-small")
+    model = llm.get_model("mistral/devstral-latest")
 
     try:
         response = model.prompt(prompt, system=SYSTEM_PROMPT, stream=False)
